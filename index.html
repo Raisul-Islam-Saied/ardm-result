@@ -626,19 +626,18 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 
-  <script>
-  // ==========================================================
-  // ⚙️ কনফিগারেশন: পাবলিশের সময় (এখানে এডিট করুন)
-  // ==========================================================
-  const PUBLISH_DATE = "2026-08-28T19:40:00+06:00"; 
+<!-- 💡 এখানে আপনার নতুন config.js ফাইলটি লিংক করে দিন -->
+<script src="config.js"></script>
 
+<script>
   document.addEventListener("DOMContentLoaded", function() {
     const timerSection = document.getElementById('timerSection');
     const resultSection = document.getElementById('resultSection');
     let timerHasStarted = false;
 
     function checkTimeAndToggle() {
-      const targetDateObj = new Date(PUBLISH_DATE);
+      // এটি এখন সরাসরি config.js থেকে PUBLISH_DATE এর মান নিয়ে নেবে
+      const targetDateObj = new Date(PUBLISH_DATE); 
       const now = new Date();
       const difference = targetDateObj.getTime() - now.getTime();
 
