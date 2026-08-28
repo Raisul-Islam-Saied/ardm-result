@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>রেজাল্ট পোর্টাল | আবদুর রাজ্জাক দাখিল মাদ্রাসা</title>
 <script>
-  // এখানে আপনার রেজাল্ট পাবলিশের সময় দিন (ফরম্যাট: YYYY-MM-DDTHH:mm:ss)
-  var PUBLISH_DATE = "2026-08-28T19:17:00"; 
+  // বাংলাদেশ সময় (BST) অনুযায়ী পাবলিশের সময় (+06:00 যুক্ত করা বাধ্যতামূলক)
+  var PUBLISH_DATE = "2026-08-28T19:21:00+06:00"; 
   
-  // যদি বর্তমান সময় পাবলিশের সময়ের চেয়ে কম হয়, তাহলে টাইমার পেজে পাঠিয়ে দেবে
-  if (new Date() < new Date(PUBLISH_DATE)) {
+  // বর্তমান সময় এবং পাবলিশের সময়ের নিখুঁত তুলনা
+  if (new Date().getTime() < new Date(PUBLISH_DATE).getTime()) {
     window.location.replace("timer.html");
   }
 </script>
+
 <style>
   /* React-এর মতো হুবহু @import করে ফন্ট যুক্ত করা হলো */
   @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
