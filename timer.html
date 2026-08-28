@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>রেজাল্ট পোর্টাল | টাইমার</title>
+  <title>রেজাল্ট পোর্টাল | আবদুর রাজ্জাক দাখিল মাদ্রাসা</title>
+  <meta name="description" content="আবদুর রাজ্জাক দাখিল মাদ্রাসা একাডেমিক ফলাফল পোর্টাল। শ্রেণি, পরীক্ষা ও শিক্ষাবর্ষ অনুযায়ী আপনার ফলাফল অনুসন্ধান করুন।" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Custom Fonts (Optional, matching typical Tailwind sans/mono) -->
+  <!-- Custom Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
@@ -33,7 +34,7 @@
 
   <div class="min-h-screen bg-[#050b14] text-slate-200 selection:bg-cyan-500 overflow-hidden relative flex flex-col">
     
-    <!-- ব্যাকগ্রাউন্ড অ্যানিমেশন (ম্যাট্রিক্স স্টাইল রেইন ইফেক্ট - CSS দিয়ে) -->
+    <!-- ব্যাকগ্রাউন্ড অ্যানিমেশন (ম্যাট্রিক্স স্টাইল রেইন ইফেক্ট) -->
     <div class="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] z-0 pointer-events-none"></div>
     
     <!-- হেডার -->
@@ -218,15 +219,13 @@
     // ⚙️ কনফিগারেশন সেকশন (এখানে এডিট করুন)
     // ==========================================
 
-    // ফরম্যাট: "YYYY-MM-DDTHH:mm:ss" (২৪ ঘণ্টার ফরম্যাট)
-    // উদাহরণ: "2026-02-15T14:00:00" মানে ২০২৬ সালের ১৫ ফেব্রুয়ারি দুপুর ২টা
-    const TARGET_DATE = "2026-02-15T14:00:00"; 
+    // বাংলাদেশের সময় অনুযায়ী (অবশ্যই শেষে +06:00 রাখতে হবে)
+    const TARGET_DATE = "2026-02-15T14:00:00+06:00"; 
 
     // ==========================================
 
     document.addEventListener("DOMContentLoaded", () => {
       
-      // Elements
       const daysEl = document.getElementById("t-days");
       const hoursEl = document.getElementById("t-hours");
       const minsEl = document.getElementById("t-mins");
@@ -240,14 +239,17 @@
       const logContainer = document.getElementById("logContainer");
       document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-      // Format Date/Time Header
       const targetDateObj = new Date(TARGET_DATE);
-      dateEl.textContent = targetDateObj.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
-      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+      
+      // যেকোনো দেশ থেকে ভিজিট করলেও বাংলাদেশ সময় (BST) দেখানোর জন্য timeZone সেট করা হয়েছে
+      dateEl.textContent = targetDateObj.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka' });
+      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' });
 
       // Countdown Timer Logic
+      let timerInterval;
+
       function calculateTime() {
-        const difference = +new Date(TARGET_DATE) - +new Date();
+        const difference = targetDateObj.getTime() - new Date().getTime();
         
         if (difference > 0) {
           const d = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -260,19 +262,19 @@
           minsEl.textContent = m < 10 ? `0${m}` : m;
           secsEl.textContent = s < 10 ? `0${s}` : s;
         } else {
-          // Time is up
+          // সময় শেষ হলে টাইমার লুপ বন্ধ করে রিডাইরেক্ট করবে (ইনফিনিট রিলোড বাগ ফিক্স)
+          clearInterval(timerInterval);
           daysEl.textContent = "00";
           hoursEl.textContent = "00";
           minsEl.textContent = "00";
           secsEl.textContent = "00";
           
-          // সময় শেষ হলে অটোমেটিক রেজাল্ট পেজে পাঠিয়ে দেবে
           window.location.replace("index.html"); 
         }
       }
       
       calculateTime(); // Initial call
-      setInterval(calculateTime, 1000);
+      timerInterval = setInterval(calculateTime, 1000);
 
       // System Log Simulation Data
       const logMessages = [
@@ -334,14 +336,12 @@
 
       // Simulation Interval
       setInterval(() => {
-        // Progress Bar
         if (progress < 99) {
           progress += (Math.random() * 0.5);
           if (progress > 99) progress = 99;
           progressTxt.textContent = Math.floor(progress) + "%";
         }
 
-        // Server Load
         serverLoad = Math.max(20, Math.min(100, serverLoad + (Math.random() * 20 - 10)));
         serverLoadTxt.textContent = serverLoad.toFixed(0) + "%";
         serverLoadBar.style.width = serverLoad + "%";
@@ -353,7 +353,6 @@
           serverLoadBar.classList.add('bg-cyan-500');
         }
 
-        // New Log
         const randomMsg = logMessages[Math.floor(Math.random() * logMessages.length)];
         const rand = Math.random();
         const type = rand > 0.8 ? 'warning' : (rand > 0.9 ? 'error' : 'success');
@@ -367,7 +366,7 @@
 
         logs.push(newLog);
         if (logs.length > 8) {
-          logs.shift(); // Keep only last 8
+          logs.shift(); 
         }
         
         renderLogs();
