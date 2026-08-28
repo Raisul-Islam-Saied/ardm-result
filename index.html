@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>রেজাল্ট পোর্টাল | আবদুর রাজ্জাক দাখিল মাদ্রাসা</title>
+
+<style>
+  /* React-এর মতো হুবহু @import করে ফন্ট যুক্ত করা হলো */
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700;800&display=swap');
+
+  /* ==========================================================
+     DESIGN TOKENS
+  ========================================================== */
+  :root{
+    --ink:#1c211f;
+    --muted:#5c6660;
+    --line:#d7d2c2;
+    --line-strong:#b9c2ba;
+    --paper:#ffffff;
+    --bg:#f2f0ea;
+    --brand:#0b3d2e;
+    --brand-2:#0e4f3a;
+    --brand-soft:#e8f1ec;
+    --gold:#8a6a24;
+    --danger:#7a2020;
+    --danger-soft:#f7e9e9;
+    --success:#1c5c39;
+    --success-soft:#e9f3ec;
+    --font-serif:'Noto Serif Bengali','Noto Serif',serif;
+    --font-sans:'Hind Siliguri','Noto Sans Bengali',sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  [hidden]{display:none !important;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  select,input{font-family:inherit;}
+
+  .page{min-height:100vh;display:flex;flex-direction:column;}
+
+  /* ==========================================================
+     HEADER
+  ========================================================== */
+  .site-header{
+    background:var(--brand);
+    border-bottom:4px double var(--gold);
+  }
+  .site-header__inner{
+    max-width:900px;margin:0 auto;
+    padding:16px 20px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .brand{display:flex;align-items:center;justify-content:center;}
+  .brand__text{text-align:center;}
+  .brand__text h1{
+    font-family:var(--font-serif);
+    font-size:20px;font-weight:700;color:#fff;margin:0 0 3px;letter-spacing:.2px;
+  }
+  .brand__text p{font-size:12px;color:#cfe3d8;margin:0;font-weight:500;}
+
+  /* ==========================================================
+     MAIN / LAYOUT
+  ========================================================== */
+  .main{flex:1;width:100%;max-width:900px;margin:0 auto;padding:32px 20px 56px;}
+
+  /* ---------- Search view ---------- */
+  .search-view{display:flex;justify-content:center;}
+  .search-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:34px 30px;
+    width:100%;max-width:560px;
+    box-shadow:0 1px 3px rgba(20,30,25,.06);
+  }
+  .search-card h2{
+    font-family:var(--font-serif);
+    font-size:22px;font-weight:700;color:var(--brand);
+    margin:0 0 6px;text-align:center;
+  }
+  .search-card .lead{
+    text-align:center;color:var(--muted);font-size:13.5px;
+    margin:0 0 22px;line-height:1.6;
+  }
+  .field-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{
+    font-size:12px;font-weight:700;color:var(--brand);letter-spacing:.2px;
+  }
+  .field select,.field input{
+    border:1px solid var(--line-strong);
+    border-radius:3px;
+    padding:11px 12px;
+    font-size:14.5px;
+    color:var(--ink);
+    background:#fff;
+    outline:none;
+    font-weight: 600; /* 💡 ফর্মের বোল্ডনেস কমানো হয়েছে */
+  }
+  .field select:focus,.field input:focus{
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px var(--brand-soft);
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:3px;border:1px solid transparent;
+    font-weight:700;font-size:14.5px;padding:12px 20px;
+  }
+  .btn--primary{background:var(--brand);color:#fff;width:100%;}
+  .btn--primary:hover{background:var(--brand-2);}
+  .btn--primary:disabled{background:#9aa79f;cursor:not-allowed;}
+  .btn--outline{background:#fff;color:var(--brand);border-color:var(--brand);}
+  .btn--outline:hover{background:var(--brand-soft);}
+  .btn--ghost{background:transparent;color:var(--ink);border-color:var(--line-strong);}
+  .btn--ghost:hover{background:#eceae2;}
+  .btn--link{background:transparent;color:var(--brand);border:none;text-decoration:underline;font-weight:600;padding:6px 4px;}
+
+  /* 💡 Loader Animation CSS */
+  .spin-icon { animation: spin 1s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  .status-box{
+    border-radius:3px;padding:12px 14px;margin-bottom:18px;
+    font-size:13.5px;font-weight:600;line-height:1.6;border:1px solid transparent;
+  }
+  .status-box.error{background:var(--danger-soft);color:var(--danger);border-color:#e3bcbc;}
+  .status-box.info{background:var(--brand-soft);color:var(--brand);border-color:#bcd6c8;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar--bottom{
+    display:flex;flex-direction:column;gap:10px;
+    width:100%;max-width:520px;margin:20px auto 0;
+  }
+  .toolbar--bottom .btn{width:100%;}
+
+  /* ==========================================================
+     CERTIFICATE (on-screen formal result)
+  ========================================================== */
+  .certificate{
+    position:relative;
+    width:100%;margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--line-strong);
+    padding:32px 34px 26px;
+  }
+  .certificate__head{text-align:center;border-bottom:2px solid var(--brand);padding-bottom:16px;margin-bottom:20px;}
+  .certificate__head h2{
+    font-family:var(--font-serif);font-size:26px;font-weight:800;color:var(--brand);margin:0 0 4px;
+  }
+  .certificate__head .addr{font-size:12.5px;color:var(--muted);margin:0 0 12px;font-weight:500;}
+  .certificate__head .doc-title{
+    font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--ink);
+    letter-spacing:.5px;margin:0 0 4px;
+  }
+  .certificate__head .exam-line{font-size:13.5px;font-weight:700;color:var(--gold);}
+
+  table{width:100%;border-collapse:collapse;}
+  .info-table{margin-bottom:18px;}
+  .info-table th,.info-table td{
+    border:1px solid var(--line-strong);
+    padding:10px 12px;font-size:14px;text-align:left;
+  }
+  .info-table th{background:var(--brand-soft);color:var(--brand);font-weight:700;white-space:nowrap;width:1%;}
+  .info-table td{font-weight:700;color:var(--ink);}
+  .info-table .en-name{letter-spacing:.3px;}
+
+  .subjects-table{margin-bottom:18px;font-size:13.5px;}
+  .subjects-table th{
+    background:var(--brand);color:#fff;font-weight:700;
+    padding:10px 8px;text-align:center;border:1px solid var(--brand-2);
+  }
+  .subjects-table td{
+    border:1px solid var(--line-strong);padding:8px;text-align:center;color:var(--ink);
+  }
+  .subjects-table td:first-child{text-align:left;font-weight:700;padding-left: 8px;} /* 💡 বিষয়ের প্যাডিং কমানো হয়েছে */
+  .subjects-table td:not(:first-child){font-weight:700;} 
+  .subjects-table tbody tr:nth-child(even){background:#f7f6f1;}
+
+  .summary-table{margin-bottom:18px;}
+  .summary-table th,.summary-table td{
+    border:1px solid var(--line-strong);padding:10px 12px;font-size:14px;text-align:left;
+  }
+  .summary-table th{background:var(--brand-soft);color:var(--brand);font-weight:700;width:28%;} 
+  .summary-table td{font-weight:700;color:var(--ink);width:22%;} 
+  .summary-table .result-row th{width:28%;} 
+  .summary-table .result-row td{font-family:var(--font-serif);font-size:16px;font-weight:800;letter-spacing:.3px;}
+  .summary-table .pass{color:var(--success);}
+  .summary-table .fail{color:var(--danger);}
+
+  .remark{border:1px solid var(--line-strong);border-left:4px solid var(--brand);padding:14px 16px;margin-bottom:22px;background:#fbfaf6;}
+  .remark__label{font-weight:700;color:var(--brand);font-size:13px;display:block;margin-bottom:6px;}
+  .remark p{margin:0;font-size:14px;line-height:1.7;color:var(--ink);}
+
+  .certificate__foot{border-top:1px solid var(--line);padding-top:14px;text-align:center;}
+  .certificate__foot p{margin:0 0 4px;font-size:12px;color:var(--muted);font-weight:600;}
+  .certificate__foot .note{font-style:italic;}
+
+  /* ==========================================================
+     FOOTER
+  ========================================================== */
+  .site-footer{text-align:center;padding:20px;border-top:1px solid var(--line);}
+  .site-footer p{margin:0 0 4px;font-size:12px;color:var(--muted);}
+
+  /* ==========================================================
+     PRINT (visible certificate — for the "প্রিন্ট করুন" button)
+  ========================================================== */
+  @media print{
+    .no-print{display:none !important;}
+    body{background:#fff;}
+    .main{padding:0;max-width:none;}
+    .certificate{border:1px solid #000;box-shadow:none;max-width:none;}
+    .site-header,.site-footer{display:none !important;}
+  }
+
+  /* ==========================================================
+     RESPONSIVE
+  ========================================================== */
+  @media (max-width:640px){
+    .field-grid{grid-template-columns:1fr;}
+    .main{padding:24px 10px 48px;}
+    .certificate{padding:18px 10px 18px;}
+    .certificate__head h2{font-size:19px;}
+    .info-table th,.info-table td,.summary-table th,.summary-table td{font-size:12px;padding:7px 6px;}
+    .subjects-table{font-size:11.5px;}
+    .subjects-table th,.subjects-table td{padding:6px 4px;}
+  }
+
+  /* ==========================================================
+     HIDDEN CAPTURE NODE — exact replica of the original
+     marksheet design used ONLY for the downloaded PNG.
+  ========================================================== */
+  #printWrapper{ display:none; background:#ffffff; }
+
+  /* Tailwind Reset - React এর হুবহু ডিজাইন পাওয়ার জন্য */
+  #printWrapper {
+    line-height: 1.5;
+    color: #0f172a;
+  }
+  #printWrapper * {
+    box-sizing: border-box;
+  }
+  #printWrapper h1, #printWrapper h2, #printWrapper h3, #printWrapper p {
+    margin: 0;
+  }
+
+  #printWrapper .print-outer{
+    min-height:auto;background:#fff;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-start;padding-bottom:20px;
+  }
+  #printWrapper .print-container-wrapper{width:100%;display:flex;justify-content:center;}
+
+  #printWrapper .print-container{
+    font-family:'Hind Siliguri','Noto Sans Bengali', sans-serif;
+    width:210mm;
+    height:297mm;
+    padding:10mm;
+    margin:0 auto;
+    background:white;
+    box-sizing:border-box;
+    position:relative;
+    display:block;
+    overflow:hidden;
+  }
+  #printWrapper .border-frame{
+    border:3px double #000;
+    padding:5px;
+    height:100%;
+    box-sizing:border-box;
+    position:relative;
+  }
+  #printWrapper .inner-content{
+    border:1px solid #ddd;
+    height:100%;
+    padding:20px;
+    box-sizing:border-box;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+  #printWrapper .header-section{
+    text-align:center;
+    border-bottom:2px solid #000;
+    padding-bottom:10px;
+    margin-bottom:15px;
+  }
+  #printWrapper .inst-info h1{font-size:36px;color:#000;font-weight:700;line-height:1.2;}
+  #printWrapper .inst-address{font-size:15px;color:#222;margin:3px 0;font-weight:500;}
+  #printWrapper .exam-badge{
+    background:black;color:white;padding:5px 25px;border-radius:20px;
+    font-size:16px;font-weight:600;display:inline-block;margin-top:8px;
+    white-space:nowrap;
+  }
+  #printWrapper .student-info-card{
+    display:flex;justify-content:space-between;background-color:#fff;
+    border:1px solid #000;border-radius:8px;padding:12px 20px;margin-bottom:15px;
+  }
+  #printWrapper .info-column{display:flex;flex-direction:column;gap:6px;width:48%;}
+  #printWrapper .info-row{display:flex;border-bottom:1px dashed #b1dfbb;padding-bottom:3px;font-size:16px;font-weight:bold;}
+  #printWrapper .info-row:last-child{border-bottom:none;}
+  #printWrapper .info-label{font-weight:700;color:#000;width:80px;}
+  #printWrapper .info-val{font-weight:bold;color:#000;flex-grow:1;}
+  #printWrapper .result-table{width:100%;border-collapse:collapse;font-size:15px;margin-bottom:10px;}
+  #printWrapper .result-table th{background-color:#eee;color:#000;text-align:center;font-weight:bold;border:1px solid #000;}
+  #printWrapper .result-table td{border:1px solid #000;text-align:center;color:#000;font-weight:bold;}
+  #printWrapper .result-table td:first-child{text-align:left;padding-left:20px;font-weight:700;color:#000;}
+  #printWrapper .result-table tr:nth-child(even){background-color:#f9fff9;}
+  #printWrapper .summary-container{
+    margin-top:10px;margin-bottom:0px;border:2px solid #000;border-radius:8px;
+    padding:0;width:100%;box-sizing:border-box;background-color:#fff;overflow:hidden;
+  }
+  #printWrapper .summary-title{
+    background-color:#eee;color:#000;border-bottom:1px solid #000;
+    text-align:center;font-weight:bold;padding:6px;font-size:16px;
+  }
+  #printWrapper .summary-content{
+    padding:15px;display:flex;justify-content:space-around;align-items:center;
+    flex-wrap:nowrap;gap:15px;background:#fdfffd;
+  }
+  #printWrapper .summary-badge{
+    display:flex;flex-direction:column;align-items:center;background:#fff;
+    border:1px solid #d4edda;border-radius:5px;padding:5px 15px;min-width:90px;
+    box-shadow:0 2px 3px rgba(0,0,0,0.05);
+  }
+  #printWrapper .sum-label{font-size:14px;color:#222;font-weight:bold;margin-bottom:3px;}
+  #printWrapper .sum-val{font-size:17px;font-weight:bold;color:#000;}
+  #printWrapper .signature-area{position:absolute;bottom:30px;left:30px;right:30px;display:none;justify-content:space-between;}
+  #printWrapper .sig-block{text-align:center;width:160px;}
+  #printWrapper .sig-line{border-top:1px solid #222;padding-top:5px;font-size:14px;font-weight:700;color:#222;}
+  #printWrapper .computer-credit{position:absolute;bottom:8px;width:100%;text-align:center;font-size:13px;font-weight:bold;color:#222;left:0;}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <div class="brand">
+        <div class="brand__text">
+          <h1>আবদুর রাজ্জাক দাখিল মাদ্রাসা</h1>
+          <p>গ্রাম: মীরেরখীল, ডাকঘর: সরফভাটা, থানা: রাঙ্গুনিয়া, জেলা: চট্টগ্রাম</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ===================== SEARCH VIEW ===================== -->
+    <section id="searchView" class="search-view">
+      <div class="search-card">
+        <h2>একাডেমিক ফলাফল অনুসন্ধান</h2>
+        <p class="lead">শ্রেণি, পরীক্ষা, শিক্ষাবর্ষ এবং রোল অথবা আইডি নম্বর প্রদান করে আপনার ফলাফল দেখুন।</p>
+
+        <div id="statusBox" class="status-box" hidden></div>
+
+        <form id="searchForm" novalidate>
+          <div class="field-grid">
+            <div class="field">
+              <label for="fClass">শ্রেণি</label>
+              <select id="fClass" required>
+                <option value="">নির্বাচন করুন</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="fExam">পরীক্ষা</label>
+              <select id="fExam" required>
+                <option value="">নির্বাচন করুন</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="fYear">শিক্ষাবর্ষ</label>
+              <select id="fYear" required>
+                <option value="">নির্বাচন করুন</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="fId">রোল / আইডি নম্বর</label>
+              <input id="fId" type="text" inputmode="numeric" placeholder="যেমনঃ ১০১" required />
+            </div>
+          </div>
+          <button type="submit" id="searchBtn" class="btn btn--primary">ফলাফল দেখুন</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===================== RESULT VIEW ===================== -->
+    <section id="resultView" class="result-view" hidden>
+      <article class="certificate" id="certificate"></article>
+
+      <div class="toolbar toolbar--bottom no-print">
+        <button id="downloadBtn" type="button" class="btn btn--primary">ফলাফল ডাউনলোড করুন</button>
+        <button id="backBtn" type="button" class="btn btn--outline">নতুন অনুসন্ধান করুন</button>
+        <button id="complaintBtn" type="button" class="btn btn--link">ফলাফল সংক্রান্ত অভিযোগ বা মতামত জানান</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer no-print">
+    <p>© ২০২৬ আবদুর রাজ্জাক দাখিল মাদ্রাসা — সর্বস্বত্ব সংরক্ষিত।</p>
+    <p>সিস্টেম ডেভেলপার: রায়সুল ইসলাম সাঈদ</p>
+  </footer>
+
+</div>
+
+<!-- Hidden capture node — used only to generate the downloaded PNG -->
+<div id="printWrapper">
+  <div class="print-outer">
+    <div class="print-container-wrapper">
+      <div class="print-container">
+        <div class="border-frame">
+          <div class="inner-content" id="printInner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ==========================================================
+     CONFIG
+  ========================================================== */
+  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoQM0Xf5SrusbRuCwe4b3s92rK7e014DYkgiuM3yOLs9KKZ773MUkmysrM3PcxyCbpbw/exec';
+  var COMPLAINT_PHONE = '8801610988489';
+
+  var subjectsDB = [
+    { name: 'কুরআন মাজিদ', short: 'Quran' },
+    { name: 'আকাইদ ও ফিকহ', short: 'Aqaid' },
+    { name: 'হাদিস শরীফ', short: 'Hadith' },
+    { name: 'আরবি ১ম পত্র', short: 'Arabic' },
+    { name: 'আরবি ২য় পত্র', short: 'Arabic 2nd' },
+    { name: 'বাংলা ১ম পত্র', short: 'Bangla' },
+    { name: 'বাংলা ২য় পত্র', short: 'Bangla 2nd' },
+    { name: 'ইংরেজি ১ম পত্র', short: 'English' },
+    { name: 'ইংরেজি ২য় পত্র', short: 'English 2nd' },
+    { name: 'গণিত', short: 'Math' },
+    { name: 'ইসলামের ইতিহাস', short: 'History' },
+    { name: 'বাংলাদেশ ও বিশ্বপরিচয়', short: 'BGS' },
+    { name: 'বিজ্ঞান', short: 'Science' },
+    { name: 'কৃষি শিক্ষা', short: 'Agri' },
+    { name: 'মানতিক', short: 'Mantiq' },
+    { name: 'তথ্য ও যোগাযোগ প্রযুক্তি', short: 'ICT' }
+  ];
+
+  var examMap = {
+    '1st Terminal': 'প্রথম সাময়িক পরীক্ষা',
+    '2nd Terminal': 'দ্বিতীয় সাময়িক পরীক্ষা',
+    'Half Yearly': 'অর্ধ-বার্ষিক পরীক্ষা',
+    'Annual': 'বার্ষিক পরীক্ষা',
+    'Final Result': 'চূড়ান্ত ফলাফল (গড়)'
+  };
+
+  var classOptions = [
+    {val:'Play', label:'প্লে (Play)'}, {val:'Nursery', label:'নার্সারি (Nursery)'},
+    {val:'Class One', label:'১ম (One)'}, {val:'Class Two', label:'২য় (Two)'},
+    {val:'Class Three', label:'৩য় (Three)'}, {val:'Class Four', label:'৪র্থ (Four)'},
+    {val:'Class Five', label:'৫ম (Five)'}, {val:'Class Six', label:'৬ষ্ঠ (Six)'},
+    {val:'Class Seven', label:'৭ম (Seven)'}, {val:'Class Eight', label:'৮ম (Eight)'},
+    {val:'Class Nine', label:'৯ম (Nine)'}, {val:'Class Ten', label:'১০ম (Ten)'}
+  ];
+  var examOptions = [
+    {val:'1st Terminal', label:'প্রথম সাময়িক পরীক্ষা'},
+    {val:'2nd Terminal', label:'দ্বিতীয় সাময়িক পরীক্ষা'},
+    {val:'Half Yearly', label:'অর্ধ-বার্ষিক পরীক্ষা'},
+    {val:'Annual', label:'বার্ষিক পরীক্ষা'},
+    {val:'Final Result', label:'চূড়ান্ত ফলাফল (গড়)'}
+  ];
+  var yearOptions = [{val:'2025',label:'2025'},{val:'2026',label:'2026'},{val:'2027',label:'2027'}];
+
+  var EXAM_CODE_MAP = { '1st Terminal':'1','2nd Terminal':'2','Annual':'3','Half Yearly':'4','Final Result':'5' };
+  var EXAM_CODE_REVERSE = { '1':'1st Terminal','2':'2nd Terminal','3':'Annual','4':'Half Yearly','5':'Final Result' };
+  var CLASS_CODE_MAP = {
+    'Play':'01','Nursery':'02','KG':'03','Class One':'04','Class Two':'05','Class Three':'06','Class Four':'07',
+    'Class Five':'08','Class Six':'09','Class Seven':'10','Class Eight':'11','Class Nine':'12','Class Ten':'13'
+  };
+  var CLASS_CODE_REVERSE = {
+    '01':'Play','02':'Nursery','03':'KG','04':'Class One','05':'Class Two','06':'Class Three','07':'Class Four',
+    '08':'Class Five','09':'Class Six','10':'Class Seven','11':'Class Eight','12':'Class Nine','13':'Class Ten'
+  };
+  var ignoreCols = ['sl','id','name','namebn','roll','class','total marks','average (%)','full marks','highest mark','total gp','gpa','grade','merit position','status'];
+  var MAX_SUBJECTS_FOR_REMARK = 20;
+
+  /* ==========================================================
+     HELPERS
+  ========================================================== */
+  function toBn(n){
+    if (n === undefined || n === null || n === '') return '-';
+    return String(n).replace(/\d/g, function(d){ return "০১২৩৪৫৬৭৮৯"[d]; });
+  }
+  function toEnNum(n){
+    if (!n) return '';
+    var map = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+    return String(n).replace(/[০-৯]/g, function(d){ return map[d]; });
+  }
+  function getGP(percentage){
+    if (percentage >= 80) return 5.00;
+    if (percentage >= 70) return 4.00;
+    if (percentage >= 60) return 3.50;
+    if (percentage >= 50) return 3.00;
+    if (percentage >= 40) return 2.00;
+    if (percentage >= 33) return 1.00;
+    return 0.00;
+  }
+  function getGradeFromGP(gp){
+    if (gp >= 5.00) return 'A+';
+    if (gp >= 4.00) return 'A';
+    if (gp >= 3.50) return 'A-';
+    if (gp >= 3.00) return 'B';
+    if (gp >= 2.00) return 'C';
+    if (gp >= 1.00) return 'D';
+    return 'F';
+  }
+  function parseSheetName(name){
+    var parts = String(name).split('][').map(function(s){ return s.replace('[','').replace(']',''); });
+    return {
+      className: parts[0] || 'অজানা',
+      examName: parts[1] || 'অজানা',
+      year: parts[2] || 'অজানা',
+      date: parts[3] || 'অজানা',
+      timestamp: parts[4] ? parseInt(parts[4]) : null,
+      customWeight: parts[5] || null
+    };
+  }
+  function getVal(headers, data, colName){
+    var idx = headers.findIndex(function(h){
+      return String(h).split(' [')[0].trim().toLowerCase() === colName.toLowerCase();
+    });
+    return idx !== -1 ? String(data[idx]) : '-';
+  }
+  function encodeShortId(year, exam, cls, roll){
+    var examCode = EXAM_CODE_MAP[exam] || '3';
+    var cc = CLASS_CODE_MAP[cls] || '00';
+    var yy = String(year).slice(-2);
+    var rr = String(toEnNum(roll)).padStart(4,'0');
+    return yy + examCode + cc + rr;
+  }
+  function decodeShortId(id){
+    if (!id || id.length < 8) return null;
+    var yy = id.slice(0,2), e = id.slice(2,3), cc = id.slice(3,5), rr = id.slice(5);
+    var cls = CLASS_CODE_REVERSE[cc];
+    if (!cls) return null;
+    return { year:'20'+yy, exam: EXAM_CODE_REVERSE[e] || 'Annual', cls: cls, roll: String(parseInt(rr,10)) };
+  }
+  function mapExamFromUrl(exm){
+    if(!exm) return '';
+    var e = exm.toString().toLowerCase();
+    if (e==='1') return '1st Terminal';
+    if (e==='2') return '2nd Terminal';
+    if (e==='3'||e==='annual') return 'Annual';
+    if (e==='4'||e==='half yearly'||e==='halfyearly') return 'Half Yearly';
+    if (e==='5'||e==='final result'||e==='finalresult') return 'Final Result';
+    return exm;
+  }
+  function mapClassFromUrl(cls){
+    if(!cls) return '';
+    var c = cls.toString().toLowerCase();
+    var map = {'play':'Play','nursery':'Nursery','kg':'KG','1':'Class One','one':'Class One','2':'Class Two','two':'Class Two',
+      '3':'Class Three','three':'Class Three','4':'Class Four','four':'Class Four','5':'Class Five','five':'Class Five',
+      '6':'Class Six','six':'Class Six','7':'Class Seven','seven':'Class Seven','8':'Class Eight','eight':'Class Eight',
+      '9':'Class Nine','nine':'Class Nine','10':'Class Ten','ten':'Class Ten'};
+    return map[c] || cls;
+  }
+
+  function seededRandom(seed){ var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+  function pickAI(arr, seed){ return arr[Math.floor(seededRandom(seed) * arr.length)]; }
+
+  function generateSmartRemark(id, totalMarks, gpa, isPass, subjects){
+    if (MAX_SUBJECTS_FOR_REMARK === 0 || subjects.length > MAX_SUBJECTS_FOR_REMARK) return "";
+    var seed = (Number(toEnNum(id)) || 1) + (Number(toEnNum(totalMarks)) || 1);
+    var bestSub = "", worstSub = "", maxMark = -1, minMark = 999, weakCount = 0, failCount = 0;
+    subjects.forEach(function(sub){
+      var percent = (sub.mark / sub.full) * 100;
+      if (percent > maxMark){ maxMark = percent; bestSub = sub.name; }
+      if (percent < minMark){ minMark = percent; worstSub = sub.name; }
+      if (percent < 45) weakCount++;
+      if (percent < 33) failCount++;
+    });
+    var weakText = (weakCount > 1) ? "একাধিক বিষয়ে (বিশেষত '"+worstSub+"'-এ)" : "'"+worstSub+"' বিষয়ে";
+    var strongText = "'"+bestSub+"' বিষয়ে";
+    var remark = "";
+    var numGpa = parseFloat(toEnNum(gpa));
+
+    if (failCount > 2){
+      return "একাধিক বিষয়ে অকৃতকার্য হওয়া পড়াশোনায় চরম অমনোযোগের লক্ষণ। শিক্ষাজীবন নিয়ে উদ্বেগজনক এই পরিস্থিতি উত্তরণে অভিভাবকের নিবিড় তদারকি ও ত্বরিত পদক্ষেপ প্রয়োজন।";
+    }
+    if (numGpa >= 5.00 && isPass){
+      var i1=[ "অসাধারণ মেধার স্বাক্ষর! "+strongText+" তার দক্ষতা প্রশংসনীয় এবং সবগুলো বিষয়েই পারফরম্যান্স অত্যন্ত ধারাবাহিক।",
+               "খুবই চমৎকার রেজাল্ট! মেধা ও চেষ্টার সঠিক প্রতিফলন ঘটেছে এই ফলাফলে।",
+               "পড়াশোনায় একাগ্রতা ও অধ্যবসায়ের কারণেই এই অসামান্য ফলাফল অর্জন করা সম্ভব হয়েছে।" ];
+      var m1=[ "তার মতো একজন মেধাবী শিক্ষার্থীর কাছ থেকে ঠিক এমন একটি রেজাল্টই কাম্য।",
+               "এই সাফল্যের ধারা আগামীতেও অব্যাহত থাকুক, সেই প্রত্যাশা রইলো।" ];
+      remark = pickAI(i1,seed) + " " + pickAI(m1,seed+1);
+    } else if (numGpa >= 3.50 && isPass){
+      var i2=[ "ফলাফল বেশ ভালো ও সন্তোষজনক। তবে "+strongText+" ভালো করলেও "+weakText+" তাকে আরও ফোকাস করতে হবে।",
+               "পড়াশোনার প্রতি তার একাগ্রতা প্রশংসনীয়। তবে মেধা অনুযায়ী আরও ভালো করার সক্ষমতা তার রয়েছে।",
+               "বেশ ভালো রেজাল্ট! নিয়মিত অনুশীলন করলে আগামীতে সে অনায়াসেই পূর্ণাঙ্গ সাফল্য অর্জন করতে পারবে।" ];
+      var m2=[ "আরেকটু গাইডলাইন পেলে ফলাফল আরও নিখুঁত হতো। শুধু "+weakText+" কিছুটা সময় দেওয়া প্রয়োজন।",
+               "এই ধারাবাহিকতা ধরে রেখে নিজের দুর্বলতাগুলো কাটিয়ে ওঠার চেষ্টা করতে হবে।" ];
+      remark = pickAI(i2,seed) + " " + pickAI(m2,seed+1);
+    } else if (isPass){
+      var i3=[ "কৃতকার্য হলেও এই ফলাফল তার আসল মেধার পরিচায়ক নয়। বিশেষ করে "+weakText+" তাকে আরও অনেক বেশি সিরিয়াস হতে হবে।",
+               "ফলাফল চলনসই। তবে ক্লাসে তাকে আরও মনোযোগী হতে হবে এবং বাসায় পড়ার সময় বাড়াতে হবে।",
+               "পাস করলেও ফলাফলে পুরোপুরি সন্তুষ্ট হওয়ার সুযোগ নেই। তার আরও দায়িত্বশীল হওয়া প্রয়োজন।" ];
+      var m3=[ weakText+" দুর্বলতা কাটিয়ে উঠতে শিক্ষকদের পরামর্শ মেনে চলা অত্যন্ত জরুরি।",
+               "আশা করি আগামী পরীক্ষায় সে নিজের এই ঘাটতিগুলো কাটিয়ে উঠতে সক্ষম হবে।" ];
+      remark = pickAI(i3,seed) + " " + pickAI(m3,seed+1);
+    } else {
+      var i4=[ "অকৃতকার্য হওয়ার বিষয়টি হতাশাজনক। মূলত "+weakText+" বেসিক ঘাটতির কারণেই এই ফলাফল।",
+               "পড়াশোনায় অমনোযোগিতার কারণেই আশানুরূপ ফলাফল হয়নি। তাকে আরও অনেক বেশি যত্নশীল হতে হবে।",
+               "আশা অনুযায়ী ফলাফল আসেনি। ভুল থেকে শিক্ষা নিয়ে তাকে শক্তভাবে ঘুরে দাঁড়াতে হবে।" ];
+      var m4=[ weakText+" স্পেশাল কেয়ার নেওয়া প্রয়োজন। নতুবা এই গ্যাপ পূরণ করা সম্ভব হবে না।",
+               "নিয়মিত পড়ার টেবিলে বসার অভ্যাস না থাকলে আগামীতেও ফলাফল খারাপ হওয়ার আশঙ্কা রয়েছে।" ];
+      remark = pickAI(i4,seed) + " " + pickAI(m4,seed+1);
+    }
+    return remark;
+  }
+
+  /* ==========================================================
+     STATE
+  ========================================================== */
+  var publishedExams = [];
+  var cachedSheets = {};
+  var autoSearch = null;
+
+  /* ==========================================================
+     DOM
+  ========================================================== */
+  var $ = function(id){ return document.getElementById(id); };
+  var fClass = $('fClass'), fExam = $('fExam'), fYear = $('fYear'), fId = $('fId');
+  var searchForm = $('searchForm'), searchBtn = $('searchBtn'), statusBox = $('statusBox');
+  var searchView = $('searchView'), resultView = $('resultView'), certificate = $('certificate');
+  var backBtn = $('backBtn'), downloadBtn = $('downloadBtn'), complaintBtn = $('complaintBtn');
+
+  function fillSelect(sel, options){
+    options.forEach(function(o){
+      var opt = document.createElement('option');
+      opt.value = o.val; opt.textContent = o.label;
+      sel.appendChild(opt);
+    });
+  }
+  fillSelect(fClass, classOptions);
+  fillSelect(fExam, examOptions);
+  fillSelect(fYear, yearOptions);
+
+  function showStatus(msg, type){
+    statusBox.textContent = msg;
+    statusBox.className = 'status-box ' + (type || 'error');
+    statusBox.hidden = false;
+  }
+  function hideStatus(){ statusBox.hidden = true; }
+
+  /* ==========================================================
+     FETCH PUBLISHED EXAMS (WITH AUTO-SELECT)
+  ========================================================== */
+  function fetchAllExams(){
+    return fetch(GOOGLE_SCRIPT_URL, { method:'GET', headers:{'Content-Type':'text/plain'}, redirect:'follow' })
+      .then(function(res){ return res.text(); })
+      .then(function(text){
+        var result;
+        try { result = JSON.parse(text); }
+        catch(e){ throw new Error('সার্ভার থেকে সঠিক তথ্য পাওয়া যায়নি।'); }
+        if (result.status !== 'success') throw new Error(result.message || 'তথ্য লোড করতে সমস্যা হয়েছে।');
+        
+        var valid = (result.data || []).filter(function(s){ return String(s.sheetName).startsWith('['); });
+        valid.sort(function(a,b){
+          var ta = parseSheetName(a.sheetName).timestamp || 0;
+          var tb = parseSheetName(b.sheetName).timestamp || 0;
+          return tb - ta;
+        });
+        publishedExams = valid;
+
+        // 💡 Auto-Select Recent Exam & Year
+        if (publishedExams.length > 0) {
+          var latest = parseSheetName(publishedExams[0].sheetName);
+          if (!fExam.value) {
+            var examExists = Array.from(fExam.options).some(function(opt){ return opt.value === latest.examName; });
+            if (examExists) fExam.value = latest.examName;
+          }
+          if (!fYear.value) {
+            var yearExists = Array.from(fYear.options).some(function(opt){ return opt.value === latest.year; });
+            if (yearExists) fYear.value = latest.year;
+          }
+        }
+      });
+  }
+
+  /* ==========================================================
+     SEARCH WITH FAKE LOADING
+  ========================================================== */
+  function performSearch(cls, exam, year, id){
+    hideStatus();
+    if (!cls || !exam || !year || !id){
+      showStatus('অনুগ্রহ করে সবগুলো তথ্য প্রদান করুন।', 'error');
+      return Promise.resolve();
+    }
+    
+    // 💡 Enable Button Spinner (Fake Loader)
+    var originalBtnText = searchBtn.textContent;
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = '<svg class="spin-icon" style="margin-right:8px; vertical-align:-3px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> খোঁজা হচ্ছে...';
+
+    var prefix = '['+cls+']['+exam+']['+year+']';
+    var targetSheet = publishedExams.filter(function(s){ return s.sheetName.indexOf(prefix) === 0; })[0];
+
+    // 💡 Create Fake 1 Second Delay Promise
+    var fakeDelay = new Promise(function(resolve) { setTimeout(resolve, 1000); });
+
+    var dataFetch = new Promise(function(resolve, reject){
+      if (!targetSheet){
+        return reject(new Error('এই তথ্য অনুযায়ী কোনো ফলাফল প্রকাশিত হয়নি।'));
+      }
+      var sheetInfo = parseSheetName(targetSheet.sheetName);
+      if (sheetInfo.timestamp && Date.now() < sheetInfo.timestamp){
+        return reject(new Error('রেজাল্ট এখনো প্রকাশিত হয়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।'));
+      }
+
+      if (cachedSheets[targetSheet.sheetName]){
+        resolve({ data: cachedSheets[targetSheet.sheetName], sheetInfo: sheetInfo });
+      } else {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'search', sheetName: targetSheet.sheetName, key:'' })
+        }).then(function(res){ return res.json(); }).then(function(result){
+          if (result.status !== 'success') throw new Error(result.message || 'তথ্য পাওয়া যায়নি।');
+          cachedSheets[targetSheet.sheetName] = result.data;
+          resolve({ data: result.data, sheetInfo: sheetInfo });
+        }).catch(reject);
+      }
+    });
+
+    // 💡 Wait for BOTH the API Call and the 1-sec Fake Delay
+    Promise.all([dataFetch, fakeDelay]).then(function(results){
+      var resultObj = results[0];
+      var sheetData = resultObj.data;
+      var sheetInfo = resultObj.sheetInfo;
+
+      var headers = sheetData[0];
+      var idIndex = headers.findIndex(function(h){ return String(h).split(' [')[0].trim().toLowerCase() === 'id'; });
+      var rollIndex = headers.findIndex(function(h){ return String(h).split(' [')[0].trim().toLowerCase() === 'roll'; });
+      var normalizedId = toEnNum(id).trim();
+
+      var studentRow = sheetData.slice(1).filter(function(row){
+        var matchId = idIndex !== -1 && toEnNum(row[idIndex]).trim() === normalizedId;
+        var matchRoll = rollIndex !== -1 && toEnNum(row[rollIndex]).trim() === normalizedId;
+        return matchId || matchRoll;
+      })[0];
+
+      if (!studentRow){
+        throw new Error('উক্ত রোল/আইডি নম্বরে কোনো ফলাফল পাওয়া যায়নি।');
+      }
+
+      var highestMarks = [];
+      headers.forEach(function(h, colIdx){
+        var maxM = 0;
+        sheetData.slice(1).forEach(function(r){
+          var val = Number(r[colIdx]);
+          if (!isNaN(val)) maxM = Math.max(maxM, val);
+        });
+        highestMarks[colIdx] = maxM;
+      });
+
+      logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
+
+      var shortId = encodeShortId(year, exam, cls, id);
+      try { window.history.pushState({}, '', '?id=' + shortId); } catch(e){}
+
+      renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo });
+
+    }).catch(function(err){
+      showStatus(err.message || 'ফলাফল পাওয়া যায়নি।', 'error');
+    }).finally(function(){
+      searchBtn.disabled = false;
+      searchBtn.textContent = originalBtnText; // 💡 Restore Original Text
+    });
+  }
+
+  function logSearchSilently(headers, studentRow, cls, exam, year, normalizedId){
+    try{
+      var targetId = getVal(headers, studentRow, 'id');
+      var targetRoll = getVal(headers, studentRow, 'roll');
+      var targetName = getVal(headers, studentRow, 'namebn') !== '-' ? getVal(headers, studentRow, 'namebn') : getVal(headers, studentRow, 'name');
+      var searcherName = localStorage.getItem('ardm_searcher_name');
+      var searcherId = localStorage.getItem('ardm_searcher_id');
+      if (!searcherName || !searcherId){
+        var randomNum = Math.floor(100000 + Math.random() * 900000);
+        searcherName = targetName; searcherId = randomNum.toString();
+        localStorage.setItem('ardm_searcher_name', searcherName);
+        localStorage.setItem('ardm_searcher_id', searcherId);
+      }
+      fetch(GOOGLE_SCRIPT_URL, {
+        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({
+          action:'log_search', searcherName: searcherName, searcherId: searcherId,
+          className: cls, examName: exam, year: year, searchId: normalizedId,
+          stdName: targetName, stdRoll: targetRoll, stdId: targetId
+        })
+      }).catch(function(){});
+    }catch(e){}
+  }
+
+  /* ==========================================================
+     RENDER RESULT (professional on-screen certificate)
+  ========================================================== */
+  var currentComputed = null;
+
+  function computeResult(payload){
+    var headers = payload.headers, data = payload.data, highestMarks = payload.highestMarks, sheetInfo = payload.sheetInfo;
+    var stdId = getVal(headers, data, 'id');
+    var stdNameBn = getVal(headers, data, 'namebn') !== '-' ? getVal(headers, data, 'namebn') : getVal(headers, data, 'name');
+    var stdNameEn = getVal(headers, data, 'name');
+    var stdClass = getVal(headers, data, 'class') !== '-' ? getVal(headers, data, 'class') : sheetInfo.className;
+    var stdRoll = getVal(headers, data, 'roll');
+    var totalMarks = getVal(headers, data, 'total marks');
+    var gpa = getVal(headers, data, 'gpa');
+    var grade = getVal(headers, data, 'grade');
+    var merit = getVal(headers, data, 'merit position');
+    var status = getVal(headers, data, 'status');
+    var isPass = String(status).toLowerCase().indexOf('pass') !== -1 || status === '-';
+
+    var displayExamName = examMap[sheetInfo.examName] || sheetInfo.examName;
+    if (sheetInfo.examName === 'Final Result' && sheetInfo.customWeight){
+      displayExamName = 'চূড়ান্ত ফলাফল (' + sheetInfo.customWeight + ')';
+    }
+
+    var calcGrandFull = 0, calcGrandMarks = 0, calcTotalGp = 0, calcFailCount = 0;
+    var subjects = headers.map(function(h, idx){
+      var headerStr = String(h);
+      if (!headerStr) return null;
+      var rawName = headerStr.split(' [')[0].trim();
+      if (ignoreCols.indexOf(rawName.toLowerCase()) !== -1) return null;
+      var fullMatch = headerStr.match(/\[(\d+)\]/);
+      var full = fullMatch ? parseInt(fullMatch[1],10) : 100;
+      var matched = subjectsDB.filter(function(s){ return s.short.toLowerCase() === rawName.toLowerCase(); })[0];
+      var displayName = matched ? matched.name : rawName;
+      var mark = parseFloat(data[idx]) || 0;
+      var percent = (mark / full) * 100;
+      var gp = getGP(percent);
+      var letterGrade = getGradeFromGP(gp);
+      calcGrandFull += full; calcGrandMarks += mark; calcTotalGp += gp;
+      if (percent < 33) calcFailCount++;
+      return { name: displayName, full: full, mark: mark, highest: highestMarks[idx], gp: gp, grade: letterGrade, percent: percent };
+    }).filter(Boolean);
+
+    var calcAvg = calcGrandFull > 0 ? ((calcGrandMarks / calcGrandFull) * 100).toFixed(2) : '0.00';
+    var remarkText = generateSmartRemark(stdId, totalMarks, gpa, isPass, subjects);
+    var printDate = new Date().toLocaleDateString('bn-BD');
+
+    return {
+      stdId: stdId, stdNameBn: stdNameBn, stdNameEn: stdNameEn, stdClass: stdClass, stdRoll: stdRoll,
+      totalMarks: totalMarks, gpa: gpa, grade: grade, merit: merit, isPass: isPass,
+      displayExamName: displayExamName, sheetInfo: sheetInfo, subjects: subjects,
+      calcGrandFull: calcGrandFull, calcTotalGp: calcTotalGp, calcAvg: calcAvg,
+      calcFailCount: calcFailCount, remarkText: remarkText, printDate: printDate
+    };
+  }
+
+  function esc(v){
+    return String(v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function renderResult(payload){
+    var r = computeResult(payload);
+    currentComputed = r;
+
+    var subjectRows = r.subjects.map(function(sub){
+      return '<tr>' +
+        '<td>'+esc(sub.name)+'</td>' +
+        '<td>'+toBn(sub.full)+'</td>' +
+        '<td>'+toBn(sub.mark)+'</td>' +
+        '<td>'+toBn(sub.highest)+'</td>' +
+        '<td>'+sub.gp.toFixed(2)+' ('+sub.grade+')</td>' +
+      '</tr>';
+    }).join('');
+
+    var hasEnName = r.stdNameEn && r.stdNameEn !== '-';
+    var infoRows = ''
+      + '<tr><th>শিক্ষার্থীর নাম</th><td colspan="3">'+esc(r.stdNameBn)+'</td></tr>'
+      + (hasEnName ? '<tr><th>Student Name</th><td colspan="3" class="en-name">'+esc(r.stdNameEn.toUpperCase())+'</td></tr>' : '')
+      + '<tr><th>Student ID</th><td colspan="3">'+toBn(r.stdId)+'</td></tr>'
+      + '<tr><th>শ্রেণি</th><td>'+toBn(r.stdClass)+'</td><th>রোল নম্বর</th><td>'+toBn(r.stdRoll)+'</td></tr>';
+
+    var html = ''
+      + '<header class="certificate__head">'
+      +   '<h2>আবদুর রাজ্জাক দাখিল মাদ্রাসা</h2>'
+      +   '<p class="addr">গ্রাম: মীরেরখীল, ডাকঘর: সরফভাটা, থানা: রাঙ্গুনিয়া, জেলা: চট্টগ্রাম</p>'
+      +   '<div class="doc-title">একাডেমিক ফলাফল বিবরণী</div>'
+      +   '<div class="exam-line">'+esc(r.displayExamName)+' — '+toBn(r.sheetInfo.year)+'</div>'
+      + '</header>'
+      + '<table class="info-table"><tbody>'+infoRows+'</tbody></table>'
+      + '<table class="subjects-table">'
+      +   '<thead><tr><th>বিষয়ের নাম</th><th>পূর্ণমান</th><th>প্রাপ্ত নম্বর</th><th>সর্বোচ্চ নম্বর</th><th>গ্রেড পয়েন্ট</th></tr></thead>'
+      +   '<tbody>'+subjectRows+'</tbody>'
+      + '</table>'
+      + '<table class="summary-table"><tbody>'
+      +   '<tr><th>মোট প্রাপ্ত নম্বর</th><td>'+toBn(r.totalMarks)+'</td><th>মোট জিপি</th><td>'+r.calcTotalGp.toFixed(2)+'</td></tr>'
+      +   '<tr><th>গড় নম্বর (%)</th><td>'+toBn(r.calcAvg)+'</td><th>জিপিএ</th><td>'+(!isNaN(parseFloat(r.gpa)) ? parseFloat(r.gpa).toFixed(2) : r.gpa)+'</td></tr>'
+      +   '<tr><th>অক্ষর গ্রেড</th><td>'+r.grade+'</td><th>মেধাক্রম</th><td>'+(r.merit && r.merit !== '-' ? toBn(r.merit) : '--')+'</td></tr>'
+      +   '<tr class="result-row"><th>চূড়ান্ত ফলাফল</th><td colspan="3" class="'+(r.isPass?'pass':'fail')+'">'+(r.isPass?'উত্তীর্ণ (Pass)':'অকৃতকার্য (Fail)')+'</td></tr>'
+      + '</tbody></table>'
+      + (r.remarkText ? (
+          '<div class="remark"><span class="remark__label">শ্রেণি শিক্ষকের মন্তব্য</span><p>'+esc(r.remarkText)+'</p></div>'
+        ) : '')
+      + '<footer class="certificate__foot">'
+      +   '<p class="note">এই ফলাফলটি কম্পিউটার-জেনারেটেড, স্বাক্ষরের প্রয়োজন নেই।</p>' /* 💡 Issue Date Removed */
+      + '</footer>';
+
+    certificate.innerHTML = html;
+    searchView.hidden = true;
+    resultView.hidden = false;
+    window.scrollTo({ top: 0 });
+  }
+
+  /* ==========================================================
+     HIDDEN CAPTURE NODE (pixel-identical marksheet for download)
+  ========================================================== */
+  function buildPrintNode(r){
+    var subCount = r.subjects.length;
+    var pad = "4px 5px";
+    if (subCount <= 9) pad = "10px 5px";
+    else if (subCount <= 11) pad = "8px 5px";
+    else if (subCount <= 13) pad = "5.5px 5px";
+
+    var rows = r.subjects.map(function(sub){
+      return '<tr>' +
+        '<td>'+esc(sub.name)+'</td>' +
+        '<td>'+toBn(sub.full)+'</td>' +
+        '<td>'+toBn(sub.mark)+'</td>' +
+        '<td>'+toBn(sub.highest)+'</td>' +
+        '<td>'+sub.gp.toFixed(2)+'</td>' +
+        '<td>'+sub.grade+'</td>' +
+      '</tr>';
+    }).join('');
+
+    var resultHtml = r.isPass
+      ? '<span style="color:#155724;">উত্তীর্ণ</span>'
+      : '<span style="color:#721c24;">অকৃতকার্য</span>';
+
+    var remarkBlock = '';
+    if (r.remarkText && subCount <= 6){
+      remarkBlock = '<div class="remark-area" style="margin-top:15px;margin-bottom:40px;border:1px solid #000;border-radius:8px;padding:12px 16px;background:#fff;box-sizing:border-box;">'
+        + '<div style="font-size:15px;color:#000;line-height:1.5;text-align:justify;">'
+        + '<span class="remark-title" style="font-weight:800;font-size:16px;">শ্রেণি শিক্ষকের মন্তব্য:</span> <br/>'
+        + '<span class="remark-text" style="font-weight:600;font-style:italic;margin-top:4px;display:inline-block;">'+esc(r.remarkText)+'</span>'
+        + '</div></div>';
+    }
+
+    var gpaVal = !isNaN(parseFloat(r.gpa)) ? parseFloat(r.gpa).toFixed(2) : r.gpa;
+
+    var html = ''
+      + '<div class="header-section">'
+      +   '<div class="inst-info">'
+      +     '<h1>আবদুর রাজ্জাক দাখিল মাদ্রাসা</h1>'
+      +     '<div class="inst-address">গ্রাম: মীরেরখীল, ডাকঘর: সরফভাটা, থানা: রাঙ্গুনিয়া, জেলা: চট্টগ্রাম।</div>'
+      +     '<div class="exam-badge">'+esc(r.displayExamName)+' - '+toBn(r.sheetInfo.year)+'</div>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="student-info-card">'
+      +   '<div class="info-column">'
+      +     '<div class="info-row"><span class="info-label">আইডি নং:</span><span class="info-val">'+toBn(r.stdId)+'</span></div>'
+      +     '<div class="info-row"><span class="info-label">নাম:</span><span class="info-val">'+esc(r.stdNameBn)+'</span></div>'
+      +   '</div>'
+      +   '<div class="info-column">'
+      +     '<div class="info-row"><span class="info-label">শ্রেণি:</span><span class="info-val">'+toBn(r.stdClass)+'</span></div>'
+      +     '<div class="info-row"><span class="info-label">রোল নং:</span><span class="info-val">'+toBn(r.stdRoll)+'</span></div>'
+      +   '</div>'
+      + '</div>'
+      + '<table class="result-table" id="dlResultTable">'
+      +   '<thead><tr>'
+      +     '<th width="35%">বিষয়ের নাম</th><th width="12%">পূর্ণমান</th><th width="15%">প্রাপ্ত নম্বর</th>'
+      +     '<th width="15%">সর্বোচ্চ</th><th width="10%">জিপি</th><th width="13%">গ্রেড</th>'
+      +   '</tr></thead>'
+      +   '<tbody>'+rows+'</tbody>'
+      + '</table>'
+      + '<div class="summary-container">'
+      +   '<div class="summary-title">চূড়ান্ত ফলাফল বিবরণী</div>'
+      +   '<div class="summary-content">'
+      +     '<div class="summary-badge"><span class="sum-label">মোট নম্বর</span><span class="sum-val">'+toBn(r.totalMarks)+'</span></div>'
+      +     '<div class="summary-badge"><span class="sum-label">জিপিএ</span><span class="sum-val">'+gpaVal+'</span></div>'
+      +     '<div class="summary-badge"><span class="sum-label">গ্রেড</span><span class="sum-val">'+r.grade+'</span></div>'
+      +     '<div class="summary-badge"><span class="sum-label">মেধা স্থান</span><span class="sum-val">'+toBn(r.merit)+'</span></div>'
+      +     '<div class="summary-badge"><span class="sum-label">ফলাফল</span><span class="sum-val">'+resultHtml+'</span></div>'
+      +   '</div>'
+      + '</div>'
+      + remarkBlock
+      + '<div class="signature-area">'
+      +   '<div class="sig-block"><div class="sig-line">অভিভাবক</div></div>'
+      +   '<div class="sig-block"><div class="sig-line">শ্রেণি শিক্ষক</div></div>'
+      +   '<div class="sig-block"><div class="sig-line">সুপারিনটেনডেন্ট</div></div>'
+      + '</div>'
+      + '<div class="computer-credit">ইস্যু তারিখ: '+toBn(r.printDate)+' | সফটওয়্যার ডেভলপার: রায়সুল ইসলাম সাঈদ</div>';
+
+    var printInner = $('printInner');
+    printInner.innerHTML = html;
+
+    // Replicate the original CSS cascade exactly:
+    var padParts = pad.split(' ');
+    var vertical = padParts[0], horizontal = padParts[1];
+    var table = printInner.querySelector('#dlResultTable');
+    if (table){
+      table.querySelectorAll('th').forEach(function(th){ th.style.padding = pad; });
+      table.querySelectorAll('tbody tr').forEach(function(tr){
+        var tds = tr.querySelectorAll('td');
+        tds.forEach(function(td, idx){
+          if (idx === 0){
+            td.style.paddingTop = vertical;
+            td.style.paddingBottom = vertical;
+            td.style.paddingRight = horizontal;
+            td.style.paddingLeft = '20px';
+          } else {
+            td.style.padding = pad;
+          }
+        });
+      });
+    }
+  }
+
+  function handleDownloadImage(){
+    if (!currentComputed) return;
+    var wrapper = $('printWrapper');
+    var originalStyle = wrapper.getAttribute('style') || '';
+
+    buildPrintNode(currentComputed);
+
+    wrapper.style.display = 'block';
+    wrapper.style.position = 'fixed'; 
+    wrapper.style.top = '0px';        
+    wrapper.style.left = '-99999px';       
+    wrapper.style.zIndex = '-9999';
+    wrapper.style.width = '794px';
+    wrapper.style.height = '1123px';
+
+    var tempStyle = document.createElement('style');
+    tempStyle.innerHTML = ''
+      + '.signature-area { display: flex !important; }'
+      + '.print-container { background: #f0fdf4 !important; }'
+      + '.border-frame { border: 3px double #064e3b !important; }'
+      + '.inner-content { border: 1px solid #0d9488 !important; background: #fff !important; }'
+      + '.header-section { border-bottom: 3px solid #fde68a !important; }'
+      + '.inst-info h1 { color: #064e3b !important; }'
+      + '.inst-address { color: #064e3b !important; }'
+      + '.exam-badge { background: linear-gradient(135deg, #064e3b, #0f766e) !important; color: #ffffff !important; }'
+      + '.student-info-card { background: linear-gradient(135deg, #f0fdf4, #e0f2fe) !important; border: 2px solid #0d9488 !important; }'
+      + '.info-label { color: #064e3b !important; }'
+      + '.info-val { color: #0f172a !important; }'
+      + '.info-row { border-bottom-color: #99f6e4 !important; }'
+      + '.result-table th { background: #064e3b !important; color: #ffffff !important; border-color: #0d9488 !important; }'
+      + '.result-table td { border-color: #d1fae5 !important; color: #0f172a !important; }'
+      + '.result-table td:first-child { color: #064e3b !important; font-weight: 800 !important; }'
+      + '.result-table tr:nth-child(even) { background-color: #f0fdf4 !important; }'
+      + '.result-table tr:nth-child(odd) { background-color: #ffffff !important; }'
+      + '.summary-container { border: 2px solid #064e3b !important; }'
+      + '.summary-title { background: linear-gradient(135deg, #064e3b, #0f766e) !important; color: #fde68a !important; border-bottom-color: #0d9488 !important; }'
+      + '.summary-content { background: #f0fdf4 !important; }'
+      + '.summary-badge { background: linear-gradient(135deg, #ffffff, #f0fdf4) !important; border: 1px solid #0d9488 !important; box-shadow: 0 2px 8px rgba(6,78,59,0.1) !important; }'
+      + '.sum-label { color: #0f766e !important; }'
+      + '.sum-val { color: #064e3b !important; }'
+      + '.remark-area { border: 2px solid #064e3b !important; }'
+      + '.remark-title { color: #064e3b !important; }'
+      + '.sig-line { border-top-color: #0d9488 !important; color: #064e3b !important; }'
+      + '.computer-credit { color: #0f766e !important; }';
+    document.head.appendChild(tempStyle);
+
+    downloadBtn.disabled = true;
+    var originalLabel = downloadBtn.textContent;
+    downloadBtn.textContent = 'ডাউনলোড হচ্ছে...';
+
+    var ready = document.fonts ? document.fonts.ready : Promise.resolve();
+    ready.then(function(){
+      return new Promise(function(res){ setTimeout(res, 400); });
+    }).then(function(){
+      var target = wrapper.querySelector('.print-container') || wrapper;
+      return window.htmlToImage.toPng(target, { quality: 1, pixelRatio: 4, backgroundColor: '#f0fdf4' });
+    }).then(function(dataUrl){
+      var r = currentComputed;
+      var safeName = (r.stdNameBn || 'student').replace(/[\\\/:*?"<>|]/g, '_');
+      var link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = safeName + '_মার্কশিট_' + r.sheetInfo.year + '.png';
+      link.click();
+    }).catch(function(){
+      showStatus('ইমেজ ডাউনলোড করতে সমস্যা হয়েছে।', 'error');
+    }).finally(function(){
+      wrapper.setAttribute('style', originalStyle);
+      if (tempStyle.parentNode) tempStyle.parentNode.removeChild(tempStyle);
+      downloadBtn.disabled = false;
+      downloadBtn.textContent = originalLabel;
+    });
+  }
+
+  /* ==========================================================
+     EVENTS
+  ========================================================== */
+  searchForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    performSearch(fClass.value, fExam.value, fYear.value, fId.value.trim());
+  });
+
+  backBtn.addEventListener('click', function(){
+    resultView.hidden = true;
+    searchView.hidden = false;
+    hideStatus();
+    try { window.history.pushState({}, '', window.location.pathname); } catch(e){}
+  });
+
+  downloadBtn.addEventListener('click', handleDownloadImage);
+
+  complaintBtn.addEventListener('click', function(){
+    if (!currentComputed) return;
+    var r = currentComputed;
+    var msg = 'আসসালামু আলাইকুম, আমি *'+r.stdNameBn+'* (রোল: '+toBn(r.stdRoll)+', আইডি: '+toBn(r.stdId)+', শ্রেণি: '+toBn(r.stdClass)+')। আমি রেজাল্ট সংক্রান্ত একটি অভিযোগ/মতামত জানাতে চাচ্ছি।';
+    window.open('https://wa.me/'+COMPLAINT_PHONE+'?text='+encodeURIComponent(msg), '_blank');
+  });
+
+  window.addEventListener('popstate', function(){
+    if (!resultView.hidden){
+      resultView.hidden = true;
+      searchView.hidden = false;
+      hideStatus();
+    }
+  });
+
+  /* ==========================================================
+     INIT / URL AUTO-SEARCH
+  ========================================================== */
+  function parseUrlParams(){
+    var params = new URLSearchParams(window.location.search);
+    var shortId = params.get('id');
+    if (shortId){
+      var decoded = decodeShortId(shortId);
+      if (decoded) return decoded;
+      return null;
+    }
+    var pYear = params.get('year'), pExam = params.get('exam'), pClass = params.get('class'), pRollId = params.get('rollid');
+    if (pYear && pExam && pClass && pRollId){
+      return { year: pYear, exam: mapExamFromUrl(pExam), cls: mapClassFromUrl(pClass), roll: pRollId };
+    }
+    return null;
+  }
+
+  autoSearch = parseUrlParams();
+  if (autoSearch){
+    fClass.value = autoSearch.cls; fExam.value = autoSearch.exam; fYear.value = autoSearch.year; fId.value = autoSearch.roll;
+  }
+
+  fetchAllExams().then(function(){
+    if (autoSearch){
+      performSearch(autoSearch.cls, autoSearch.exam, autoSearch.year, autoSearch.roll);
+    }
+  }).catch(function(err){
+    showStatus(err.message || 'তথ্য লোড করতে সমস্যা হয়েছে। পেজটি রিফ্রেশ করুন।', 'error');
+  });
+
+})();
+</script>
+</body>
+  </html>
