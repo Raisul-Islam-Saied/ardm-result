@@ -1150,7 +1150,7 @@
       return new Promise(function(res){ setTimeout(res, 400); });
     }).then(function(){
       var target = wrapper.querySelector('.print-container') || wrapper;
-      return window.htmlToImage.toPng(target, { quality: 1, pixelRatio: 4, backgroundColor: '#f0fdf4' });
+      return window.htmlToImage.toPng(target, { quality: 1, pixelRatio: 3, backgroundColor: '#f0fdf4' });
     }).then(function(dataUrl){
       var r = currentComputed;
       var safeName = (r.stdNameBn || 'student').replace(/[\\\/:*?"<>|]/g, '_');
