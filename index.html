@@ -458,7 +458,7 @@
                <div>
                  <h4 class="text-yellow-500 font-bold text-sm uppercase mb-1">সতর্কবার্তা</h4>
                  <p class="text-xs text-slate-400 leading-relaxed">
-                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেন না।
+                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেনআগ।
                  </p>
                </div>
              </div>
@@ -596,9 +596,18 @@
       <article class="certificate" id="certificate"></article>
 
       <div class="toolbar toolbar--bottom no-print">
-        <button id="downloadBtn" type="button" class="btn btn--primary">ফলাফল ডাউনলোড করুন</button>
-        <button id="backBtn" type="button" class="btn btn--outline">নতুন অনুসন্ধান করুন</button>
-        <button id="complaintBtn" type="button" class="btn btn--link">ফলাফল সংক্রান্ত অভিযোগ বা মতামত জানান</button>
+        <button id="downloadBtn" type="button" class="btn btn--primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          ফলাফল ডাউনলোড করুন
+        </button>
+        <button id="backBtn" type="button" class="btn btn--outline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          নতুন অনুসন্ধান করুন
+        </button>
+        <button id="complaintBtn" type="button" class="btn btn--link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          ফলাফল সংক্রান্ত অভিযোগ বা মতামত জানান
+        </button>
       </div>
     </section>
 
@@ -1243,10 +1252,10 @@
       +   '<tbody>'+subjectRows+'</tbody>'
       + '</table>'
       + '<table class="summary-table"><tbody>'
-      +   '<tr><th>মোট প্রাপ্ত নম্বর</th><td>'+toBn(r.totalMarks)+'</td><th>মোট জিপি</th><td>'+r.calcTotalGp.toFixed(2)+'</td></tr>'
+      +   '<tr><th style="width:28%;">মোট প্রাপ্ত নম্বর</th><td style="width:26%;">'+toBn(r.totalMarks)+'<small style="font-size:0.75em; color:var(--muted);"> /'+toBn(r.calcGrandFull)+'</small></td><th style="width:24%;">মোট জিপি</th><td style="width:22%;">'+r.calcTotalGp.toFixed(2)+'</td></tr>'
       +   '<tr><th>গড় নম্বর (%)</th><td>'+toBn(r.calcAvg)+'</td><th>জিপিএ</th><td>'+(!isNaN(parseFloat(r.gpa)) ? parseFloat(r.gpa).toFixed(2) : r.gpa)+'</td></tr>'
       +   '<tr><th>অক্ষর গ্রেড</th><td>'+r.grade+'</td><th>মেধাক্রম</th><td>'+(r.merit && r.merit !== '-' ? toBn(r.merit) : '--')+'</td></tr>'
-      +   '<tr class="result-row"><th>চূড়ান্ত ফলাফল</th><td colspan="3" class="'+(r.isPass?'pass':'fail')+'">'+(r.isPass?'উত্তীর্ণ (Pass)':'অকৃতকার্য (Fail)')+'</td></tr>'
+      +   '<tr class="result-row"><th>চূড়ান্ত ফলাফল</th><td colspan="3" class="'+(r.isPass?'pass':'fail')+'">'+(r.isPass?'উত্তীর্ণ (Pass)':'অকৃতকার্য (Fail in '+toEnNum(r.calcFailCount)+')')+'</td></tr>'
       + '</tbody></table>'
       + (r.remarkText ? (
           '<div class="remark"><span class="remark__label">শ্রেণি শিক্ষকের মন্তব্য</span><p>'+esc(r.remarkText)+'</p></div>'
@@ -1411,8 +1420,8 @@
     document.head.appendChild(tempStyle);
 
     downloadBtn.disabled = true;
-    var originalLabel = downloadBtn.textContent;
-    downloadBtn.textContent = 'ডাউনলোড হচ্ছে...';
+    var originalLabel = downloadBtn.innerHTML;
+    downloadBtn.innerHTML = '<svg class="spin-icon" style="margin-right:8px; vertical-align:-3px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> ডাউনলোড হচ্ছে...';
 
     var ready = document.fonts ? document.fonts.ready : Promise.resolve();
     ready.then(function(){
@@ -1433,7 +1442,7 @@
       wrapper.setAttribute('style', originalStyle);
       if (tempStyle.parentNode) tempStyle.parentNode.removeChild(tempStyle);
       downloadBtn.disabled = false;
-      downloadBtn.textContent = originalLabel;
+      downloadBtn.innerHTML = originalLabel;
     });
   }
 
@@ -1503,4 +1512,5 @@
 })();
 </script>
 </body>
-  </html>
+</html>
+
