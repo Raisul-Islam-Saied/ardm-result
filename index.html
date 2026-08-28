@@ -217,8 +217,6 @@
   }
   .summary-table th{background:var(--brand-soft);color:var(--brand);font-weight:700;width:28%;} 
   .summary-table td{font-weight:700;color:var(--ink);width:22%;} 
-  .summary-table th:nth-child(3){width:22%;} /* মোট জিপি কলাম ২২% */
-  .summary-table td:nth-child(4){width:28%;}
   .summary-table .result-row th{width:28%;} 
   .summary-table .result-row td{font-family:var(--font-serif);font-size:16px;font-weight:800;letter-spacing:.3px;}
   .summary-table .pass{color:var(--success);}
@@ -598,14 +596,8 @@
       <article class="certificate" id="certificate"></article>
 
       <div class="toolbar toolbar--bottom no-print">
-        <button id="downloadBtn" type="button" class="btn btn--primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          ফলাফল ডাউনলোড করুন
-        </button>
-        <button id="backBtn" type="button" class="btn btn--outline">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          নতুন অনুসন্ধান করুন
-        </button>
+        <button id="downloadBtn" type="button" class="btn btn--primary">ফলাফল ডাউনলোড করুন</button>
+        <button id="backBtn" type="button" class="btn btn--outline">নতুন অনুসন্ধান করুন</button>
         <button id="complaintBtn" type="button" class="btn btn--link">ফলাফল সংক্রান্ত অভিযোগ বা মতামত জানান</button>
       </div>
     </section>
@@ -937,7 +929,7 @@
       var i4=[ "অকৃতকার্য হওয়ার বিষয়টি হতাশাজনক। মূলত "+weakText+" বেসিক ঘাটতির কারণেই এই ফলাফল।",
                "পড়াশোনায় অমনোযোগিতার কারণেই আশানুরূপ ফলাফল হয়নি। তাকে আরও অনেক বেশি যত্নশীল হতে হবে।",
                "আশা অনুযায়ী ফলাফল আসেনি। ভুল থেকে শিক্ষা নিয়ে তাকে শক্তভাবে ঘুরে দাঁড়াতে হবে।" ];
-      var m4=[ weakText+" স্পেশাল কেয়ার নেওয়া প্রয়োজন। নতুবা এই গ্যাপ পূরণ করা সম্ভব গঠন করা সম্ভব হবে না।",
+      var m4=[ weakText+" স্পেশাল কেয়ার নেওয়া প্রয়োজন। নতুবা এই গ্যাপ পূরণ করা সম্ভব হবে না।",
                "নিয়মিত পড়ার টেবিলে বসার অভ্যাস না থাকলে আগামীতেও ফলাফল খারাপ হওয়ার আশঙ্কা রয়েছে।" ];
       remark = pickAI(i4,seed) + " " + pickAI(m4,seed+1);
     }
@@ -1251,10 +1243,10 @@
       +   '<tbody>'+subjectRows+'</tbody>'
       + '</table>'
       + '<table class="summary-table"><tbody>'
-      +   '<tr><th>মোট প্রাপ্ত নম্বর</th><td>'+toBn(r.totalMarks)+'<small style="font-size:0.75em; color:var(--muted);">/'+toBn(r.calcGrandFull)+'</small></td><th>মোট জিপি</th><td>'+r.calcTotalGp.toFixed(2)+'</td></tr>'
+      +   '<tr><th>মোট প্রাপ্ত নম্বর</th><td>'+toBn(r.totalMarks)+'</td><th>মোট জিপি</th><td>'+r.calcTotalGp.toFixed(2)+'</td></tr>'
       +   '<tr><th>গড় নম্বর (%)</th><td>'+toBn(r.calcAvg)+'</td><th>জিপিএ</th><td>'+(!isNaN(parseFloat(r.gpa)) ? parseFloat(r.gpa).toFixed(2) : r.gpa)+'</td></tr>'
       +   '<tr><th>অক্ষর গ্রেড</th><td>'+r.grade+'</td><th>মেধাক্রম</th><td>'+(r.merit && r.merit !== '-' ? toBn(r.merit) : '--')+'</td></tr>'
-      +   '<tr class="result-row"><th>চূড়ান্ত ফলাফল</th><td colspan="3" class="'+(r.isPass?'pass':'fail')+'">'+(r.isPass?'উত্তীর্ণ (Pass)':'অকৃতকার্য (Fail in '+r.calcFailCount+')')+'</td></tr>'
+      +   '<tr class="result-row"><th>চূড়ান্ত ফলাফল</th><td colspan="3" class="'+(r.isPass?'pass':'fail')+'">'+(r.isPass?'উত্তীর্ণ (Pass)':'অকৃতকার্য (Fail)')+'</td></tr>'
       + '</tbody></table>'
       + (r.remarkText ? (
           '<div class="remark"><span class="remark__label">শ্রেণি শিক্ষকের মন্তব্য</span><p>'+esc(r.remarkText)+'</p></div>'
@@ -1292,7 +1284,7 @@
 
     var resultHtml = r.isPass
       ? '<span style="color:#155724;">উত্তীর্ণ</span>'
-      : '<span style="color:#721c24;">অকৃতকার্য (Fail in '+r.calcFailCount+')</span>';
+      : '<span style="color:#721c24;">অকৃতকার্য</span>';
 
     var remarkBlock = '';
     if (r.remarkText && subCount <= 6){
@@ -1333,7 +1325,7 @@
       + '<div class="summary-container">'
       +   '<div class="summary-title">চূড়ান্ত ফলাফল বিবরণী</div>'
       +   '<div class="summary-content">'
-      +     '<div class="summary-badge"><span class="sum-label">মোট নম্বর</span><span class="sum-val">'+toBn(r.totalMarks)+'<span style="font-size:0.75em; color:#555;">/'+toBn(r.calcGrandFull)+'</span></span></div>'
+      +     '<div class="summary-badge"><span class="sum-label">মোট নম্বর</span><span class="sum-val">'+toBn(r.totalMarks)+'</span></div>'
       +     '<div class="summary-badge"><span class="sum-label">জিপিএ</span><span class="sum-val">'+gpaVal+'</span></div>'
       +     '<div class="summary-badge"><span class="sum-label">গ্রেড</span><span class="sum-val">'+r.grade+'</span></div>'
       +     '<div class="summary-badge"><span class="sum-label">মেধা স্থান</span><span class="sum-val">'+toBn(r.merit)+'</span></div>'
@@ -1511,5 +1503,4 @@
 })();
 </script>
 </body>
-</html>
-
+  </html>
