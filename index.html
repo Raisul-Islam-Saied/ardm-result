@@ -17,7 +17,7 @@
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
   
-  /* রেজাল্ট পেজের রিস্টোর স্টাইল (Tailwind কনফ্লিক্ট এড়াতে) */
+  /* রেজাল্ট পেজের রিস্টোর স্টাইল (Tailwind কনফ্লিক্ট এড়াতে) */
   #resultSection * { box-sizing: border-box; }
   #resultSection [hidden] { display: none !important; }
 
@@ -375,10 +375,127 @@
   #printWrapper .sig-line{border-top:1px solid #222;padding-top:5px;font-size:14px;font-weight:700;color:#222;}
   #printWrapper .computer-credit{position:absolute;bottom:8px;width:100%;text-align:center;font-size:13px;font-weight:bold;color:#222;left:0;}
 </style>
+
+<style id="pc-print-style">
+  /* ============================================================
+     ✅ নতুন সংযোজন (ADDED ONLY — মূল UI/CSS-এর একটি অক্ষরও পরিবর্তন
+     করা হয়নি): Ctrl+P চাপলে A4 পেজে ১ পেজের মধ্যে প্রফেশনাল,
+     রঙ্গিন রেজাল্ট কার্ড প্রিন্ট হওয়ার জন্য আলাদা স্টাইল ব্লক।
+     এটি শুধুমাত্র @media print অবস্থায় সক্রিয় হয়, স্ক্রিনে
+     অ্যাপের কোনো কিছুই এর দ্বারা প্রভাবিত হয় না।
+  ============================================================ */
+  #pcPrintRoot{ display:none; }
+
+  @media print{
+    @page{ size: A4; margin: 0; }
+    html, body{ background:#fff !important; }
+
+    /* লাইভ অ্যাপের সব কিছু লুকিয়ে শুধু আমাদের প্রিন্ট-কার্ড দেখানো হবে */
+    body > *:not(#pcPrintRoot){ display:none !important; }
+
+    #pcPrintRoot{ display:block !important; }
+    #pcPrintRoot, #pcPrintRoot *{
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+  }
+
+  #pcPrintRoot *{ box-sizing:border-box; }
+  #pcPrintRoot{ font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif; color:#111; }
+
+  .pc-page{
+    width:210mm; height:297mm; padding:8mm;
+    overflow:hidden;
+    background:radial-gradient(circle at top right,#f8f5ea 0%,#ffffff 45%);
+    page-break-after:avoid; page-break-inside:avoid;
+  }
+  .pc-frame{
+    position:relative; height:100%;
+    border:3px double #0b3d2e;
+    border-radius:6px;
+    padding:4px;
+  }
+  .pc-frame-inner{
+    position:relative; height:100%;
+    border:1px solid #c9a24a;
+    border-radius:4px;
+    padding:8mm 9mm 6mm;
+    display:flex; flex-direction:column;
+  }
+  .pc-frame-inner::before, .pc-frame-inner::after{
+    content:''; position:absolute; width:22px; height:22px;
+  }
+  .pc-frame-inner::before{ top:6px; left:6px; border-top:3px solid #8a6a24; border-left:3px solid #8a6a24; }
+  .pc-frame-inner::after{ bottom:6px; right:6px; border-bottom:3px solid #8a6a24; border-right:3px solid #8a6a24; }
+
+  .pc-header{ text-align:center; padding-bottom:8px; margin-bottom:10px; border-bottom:2px solid #0b3d2e; }
+  .pc-inst-name{ font-family:'Noto Serif Bengali',serif; font-size:26px; font-weight:800; color:#0b3d2e; margin:0 0 3px; letter-spacing:.3px; }
+  .pc-inst-address{ font-size:12px; color:#4a5751; margin:0 0 8px; font-weight:600; }
+  .pc-exam-badge{
+    display:inline-block; background:linear-gradient(135deg,#0b3d2e,#146650);
+    color:#fce9b8; font-weight:700; font-size:13px; padding:5px 22px;
+    border-radius:20px; letter-spacing:.3px; border:1px solid #8a6a24;
+  }
+  .pc-doc-title{ font-family:'Noto Serif Bengali',serif; font-size:14px; font-weight:700; color:#333; margin:6px 0 0; letter-spacing:.5px; }
+
+  .pc-student-card{
+    border:1.5px solid #0b3d2e; border-radius:6px; margin-bottom:10px;
+    background:linear-gradient(135deg,#f3f8f5,#eef6f1); overflow:hidden;
+  }
+  .pc-student-name-row{
+    display:flex; flex-wrap:wrap; gap:4px 24px; padding:8px 14px;
+    border-bottom:1px dashed #b7cdbf;
+  }
+  .pc-name-pair{ display:flex; align-items:baseline; gap:5px; }
+  .pc-student-ids-row{ display:flex; }
+  .pc-id-box{ flex:1; text-align:center; padding:7px 6px; border-right:1px dashed #b7cdbf; }
+  .pc-id-box:last-child{ border-right:none; }
+  .pc-label{ display:block; font-size:10.5px; color:#0b3d2e; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+  .pc-value{ font-size:15px; font-weight:800; color:#111; }
+  .pc-student-name-row .pc-label{ display:inline; margin-bottom:0; margin-right:2px; }
+  .pc-student-name-row .pc-value{ font-size:14px; }
+
+  .pc-subjects-table{ width:100%; border-collapse:collapse; margin-bottom:10px; }
+  .pc-subjects-table thead th{
+    background:linear-gradient(135deg,#0b3d2e,#177050);
+    color:#ffffff; font-weight:700; text-align:center;
+    border:1px solid #0a2e22; font-size:12px;
+  }
+  .pc-subjects-table td{
+    border:1px solid #cfd8d2; text-align:center; font-weight:700; color:#1c211f;
+  }
+  .pc-subjects-table td:nth-child(2){ text-align:left; }
+  .pc-subjects-table tbody tr:nth-child(even){ background:#f2f8f4; }
+  .pc-subjects-table tbody tr:nth-child(odd){ background:#ffffff; }
+  .pc-subjects-table td.pc-sl{ color:#8a6a24; font-weight:800; }
+
+  .pc-summary{ display:flex; justify-content:space-between; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+  .pc-badge{
+    flex:1; min-width:60px; text-align:center; border:1px solid #0b3d2e; border-radius:6px;
+    padding:6px 4px; background:linear-gradient(180deg,#ffffff,#f3f8f5);
+  }
+  .pc-badge.pc-pass, .pc-badge.pc-fail{ flex:1.4; }
+  .pc-badge .pc-b-label{ font-size:9.5px; color:#0b3d2e; font-weight:700; margin-bottom:2px; display:block; }
+  .pc-badge .pc-b-val{ font-size:14px; font-weight:800; color:#111; }
+  .pc-badge.pc-pass .pc-b-val{ color:#1c5c39; }
+  .pc-badge.pc-fail .pc-b-val{ color:#7a2020; }
+
+  .pc-remark{
+    border:1px solid #0b3d2e; border-left:5px solid #8a6a24; border-radius:4px;
+    padding:8px 12px; margin-bottom:10px; background:#fbfaf3; font-size:12px; line-height:1.6;
+  }
+  .pc-remark b{ color:#0b3d2e; }
+
+  .pc-footer{ margin-top:auto; }
+  .pc-sign-row{ display:flex; justify-content:space-between; padding:0 10px; margin-bottom:8px; }
+  .pc-sign{ text-align:center; width:150px; border-top:1px solid #333; padding-top:4px; font-size:11.5px; font-weight:700; color:#333; }
+  .pc-credit{ text-align:center; font-size:10.5px; font-weight:700; color:#4a5751; border-top:1px dashed #b7cdbf; padding-top:6px; }
+</style>
 </head>
 <body>
 <!-- ========================================================== -->
-  <!-- ১. TIMER SECTION (সময় না হলে এটি দেখাবে)                      -->
+  <!-- ১. TIMER SECTION (সময় না হলে এটি দেখাবে)                      -->
   <!-- ========================================================== -->
   <div id="timerSection" class="min-h-screen bg-[#050b14] text-slate-200 font-sans selection:bg-cyan-500 overflow-hidden relative flex flex-col" style="display: none;">
     <div class="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] z-0 pointer-events-none"></div>
@@ -415,7 +532,7 @@
 
           <div class="text-center mb-10">
             <div class="inline-block bg-cyan-500/10 text-cyan-300 px-4 py-1 rounded-full text-sm font-semibold mb-4 border border-cyan-500/20 animate-pulse">
-              ফলাফল প্রকাশের সম্ভাব্য সময়
+              ফলাফল প্রকাশের সম্ভাব্য সময়
             </div>
             <h2 id="formattedDate" class="text-3xl md:text-5xl font-bold text-white mb-2"></h2>
             <p id="formattedTime" class="text-xl text-slate-400 font-mono"></p>
@@ -458,7 +575,7 @@
                <div>
                  <h4 class="text-yellow-500 font-bold text-sm uppercase mb-1">সতর্কবার্তা</h4>
                  <p class="text-xs text-slate-400 leading-relaxed">
-                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেনআগ।
+                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেনআগ।
                  </p>
                </div>
              </div>
@@ -523,7 +640,7 @@
   </div>
 
   <!-- ========================================================== -->
-  <!-- ২. RESULT SECTION (আপনার বর্তমান ডিভটাকে এভাবে মুড়িয়ে দিন)    -->
+  <!-- ২. RESULT SECTION (আপনার বর্তমান ডিভটাকে এভাবে মুড়িয়ে দিন)    -->
   <!-- ========================================================== -->
   <div id="resultSection" style="display: none;">
     <div class="page">
@@ -633,6 +750,10 @@
   </div>
 </div>
 </div>
+
+<!-- ✅ নতুন সংযোজন: Ctrl+P প্রিন্টের জন্য আলাদা, লুকানো রুট। এটি স্ক্রিনে কখনো দেখা যায় না। -->
+<div id="pcPrintRoot"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 
 <!-- 💡 এখানে আপনার নতুন config.js ফাইলটি লিংক করে দিন -->
@@ -645,7 +766,7 @@
     let timerHasStarted = false;
 
     function checkTimeAndToggle() {
-      // এটি এখন সরাসরি config.js থেকে PUBLISH_DATE এর মান নিয়ে নেবে
+      // এটি এখন সরাসরি config.js থেকে PUBLISH_DATE এর মান নিয়ে নেবে
       const targetDateObj = new Date(PUBLISH_DATE); 
       const now = new Date();
       const difference = targetDateObj.getTime() - now.getTime();
@@ -684,7 +805,7 @@
       }
 
       dateEl.textContent = targetDateObj.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka' });
-      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' });
+      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' });
 
       function updateCountdown() {
         const diff = targetDateObj.getTime() - new Date().getTime();
@@ -982,7 +1103,7 @@
   /* 💡 Added Validation Event Listeners with hiding logic */
   ['fClass', 'fExam', 'fYear', 'fId'].forEach(function(id){
     $(id).addEventListener('input', function(){
-      // যেকোনো ফিল্ডে হাত দিলে মেইন এরোর মেসেজ গায়েব হয়ে যাবে
+      // যেকোনো ফিল্ডে হাত দিলে মেইন এরোর মেসেজ গায়েব হয়ে যাবে
       hideStatus(); 
       
       if(this.value.trim() !== ''){
@@ -1060,7 +1181,7 @@
           return s.sheetName.indexOf(']['+exam+']['+year+']') !== -1;
         });
         if (examYearMatch) {
-          return reject(new Error('রেজাল্ট এখনো পাবলিশ হয়নি। দয়া করে অপেক্ষা করুন।'));
+          return reject(new Error('রেজাল্ট এখনো পাবলিশ হয়নি। দয়া করে অপেক্ষা করুন।'));
         } else {
           return reject(new Error('এই তথ্য অনুযায়ী কোনো ফলাফল প্রকাশিত হয়নি।'));
         }
@@ -1219,6 +1340,7 @@
   function renderResult(payload){
     var r = computeResult(payload);
     currentComputed = r;
+    if (window.__pcSyncCertificate) { window.__pcSyncCertificate(r); }
 
     var subjectRows = r.subjects.map(function(sub){
       var uiName = sub.name;
@@ -1511,6 +1633,123 @@
 
 })();
 </script>
+
+<script>
+/* ============================================================
+   ✅ নতুন সংযোজন (সম্পূর্ণ নতুন, স্বতন্ত্র স্ক্রিপ্ট):
+   Ctrl+P চাপলে A4 (১ পেজ) সাইজে প্রফেশনাল, রঙ্গিন রেজাল্ট কার্ড
+   প্রিন্ট করার জন্য। মূল অ্যাপের বিদ্যমান কোনো ফাংশন/ভ্যারিয়েবল/
+   লজিক এখানে পরিবর্তন করা হয়নি — শুধু renderResult() এর ভিতরে
+   একটি লাইন যোগ করা হয়েছে (window.__pcSyncCertificate কল) যাতে
+   এই স্বতন্ত্র স্ক্রিপ্টটি সর্বশেষ রেজাল্ট ডেটা পায়।
+============================================================ */
+(function(){
+  "use strict";
+
+  function pcToBn(n){
+    if (n === undefined || n === null || n === '') return '-';
+    return String(n).replace(/\d/g, function(d){ return "০১২৩৪৫৬৭৮৯"[d]; });
+  }
+  function pcEsc(v){
+    return String(v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function buildPrintCertificate(r){
+    if (!r) return;
+    var root = document.getElementById('pcPrintRoot');
+    if (!root) return;
+
+    var subjects = r.subjects || [];
+    var count = subjects.length;
+
+    /* বিষয় বাড়লে পেডিং কমবে, কমলে পেডিং বাড়বে — ঠিক ডাউনলোড কার্ডের মতো */
+    var rowPad = '9px 6px', fontSize = '13px', tableFont = '12.5px';
+    if (count > 16){ rowPad = '3px 4px'; fontSize = '11.5px'; tableFont = '10.5px'; }
+    else if (count > 13){ rowPad = '4px 5px'; fontSize = '12px'; tableFont = '11px'; }
+    else if (count > 11){ rowPad = '5.5px 5px'; fontSize = '12.5px'; tableFont = '11.5px'; }
+    else if (count > 9){ rowPad = '7px 6px'; fontSize = '13px'; tableFont = '12px'; }
+    else if (count > 6){ rowPad = '8px 6px'; fontSize = '13.5px'; tableFont = '12.5px'; }
+
+    var rows = subjects.map(function(sub, idx){
+      return '<tr>'
+        + '<td class="pc-sl" style="padding:'+rowPad+';">'+pcToBn(idx+1)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+pcEsc(sub.name)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+pcToBn(sub.full)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+pcToBn(sub.mark)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+pcToBn(sub.highest)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+sub.gp.toFixed(2)+'</td>'
+        + '<td style="padding:'+rowPad+';">'+sub.grade+'</td>'
+        + '</tr>';
+    }).join('');
+
+    var hasEnName = r.stdNameEn && r.stdNameEn !== '-';
+    var gpaVal = !isNaN(parseFloat(r.gpa)) ? parseFloat(r.gpa).toFixed(2) : r.gpa;
+    var resultText = r.isPass ? 'উত্তীর্ণ (Pass)' : ('অকৃতকার্য (Fail in '+pcToBn(r.calcFailCount)+')');
+
+    /* বিষয় বেশি হলে (৬ এর বেশি) রিমার্ক দেখানো হবে না — ডাউনলোড কার্ডের নিয়ম অনুযায়ী */
+    var remarkBlock = '';
+    if (r.remarkText && count <= 6){
+      remarkBlock = '<div class="pc-remark"><b>শ্রেণি শিক্ষকের মন্তব্য:</b> '+pcEsc(r.remarkText)+'</div>';
+    }
+
+    var html = ''
+      + '<div class="pc-page"><div class="pc-frame"><div class="pc-frame-inner">'
+      +   '<div class="pc-header">'
+      +     '<h1 class="pc-inst-name">আবদুর রাজ্জাক দাখিল মাদ্রাসা</h1>'
+      +     '<p class="pc-inst-address">গ্রাম: মীরেরখীল, ডাকঘর: সরফভাটা, থানা: রাঙ্গুনিয়া, জেলা: চট্টগ্রাম</p>'
+      +     '<div class="pc-exam-badge">'+pcEsc(r.displayExamName)+' — '+pcToBn(r.sheetInfo.year)+'</div>'
+      +     '<div class="pc-doc-title">একাডেমিক ফলাফল বিবরণী</div>'
+      +   '</div>'
+      +   '<div class="pc-student-card">'
+      +     '<div class="pc-student-name-row" style="font-size:'+fontSize+';">'
+      +       '<span class="pc-name-pair"><span class="pc-label">শিক্ষার্থীর নাম:</span><span class="pc-value">'+pcEsc(r.stdNameBn)+'</span></span>'
+      +       (hasEnName ? '<span class="pc-name-pair"><span class="pc-label">Name:</span><span class="pc-value">'+pcEsc(r.stdNameEn.toUpperCase())+'</span></span>' : '')
+      +     '</div>'
+      +     '<div class="pc-student-ids-row">'
+      +       '<div class="pc-id-box"><span class="pc-label">Student ID</span><span class="pc-value">'+pcToBn(r.stdId)+'</span></div>'
+      +       '<div class="pc-id-box"><span class="pc-label">শ্রেণি</span><span class="pc-value">'+pcToBn(r.stdClass)+'</span></div>'
+      +       '<div class="pc-id-box"><span class="pc-label">রোল নম্বর</span><span class="pc-value">'+pcToBn(r.stdRoll)+'</span></div>'
+      +     '</div>'
+      +   '</div>'
+      +   '<table class="pc-subjects-table" style="font-size:'+tableFont+';">'
+      +     '<thead><tr>'
+      +       '<th style="padding:'+rowPad+'; width:6%;">ক্র.</th>'
+      +       '<th style="padding:'+rowPad+'; width:32%;">বিষয়ের নাম</th>'
+      +       '<th style="padding:'+rowPad+';">পূর্ণমান</th>'
+      +       '<th style="padding:'+rowPad+';">প্রাপ্ত নম্বর</th>'
+      +       '<th style="padding:'+rowPad+';">সর্বোচ্চ নম্বর</th>'
+      +       '<th style="padding:'+rowPad+';">গ্রেড পয়েন্ট</th>'
+      +       '<th style="padding:'+rowPad+';">গ্রেড</th>'
+      +     '</tr></thead>'
+      +     '<tbody>'+rows+'</tbody>'
+      +   '</table>'
+      +   '<div class="pc-summary">'
+      +     '<div class="pc-badge"><span class="pc-b-label">মোট নম্বর</span><span class="pc-b-val">'+pcToBn(r.totalMarks)+'/'+pcToBn(r.calcGrandFull)+'</span></div>'
+      +     '<div class="pc-badge"><span class="pc-b-label">গড় (%)</span><span class="pc-b-val">'+pcToBn(r.calcAvg)+'</span></div>'
+      +     '<div class="pc-badge"><span class="pc-b-label">মোট জিপি</span><span class="pc-b-val">'+r.calcTotalGp.toFixed(2)+'</span></div>'
+      +     '<div class="pc-badge"><span class="pc-b-label">জিপিএ</span><span class="pc-b-val">'+gpaVal+'</span></div>'
+      +     '<div class="pc-badge"><span class="pc-b-label">গ্রেড</span><span class="pc-b-val">'+r.grade+'</span></div>'
+      +     '<div class="pc-badge"><span class="pc-b-label">মেধাক্রম</span><span class="pc-b-val">'+(r.merit && r.merit !== '-' ? pcToBn(r.merit) : '--')+'</span></div>'
+      +     '<div class="pc-badge '+(r.isPass ? 'pc-pass' : 'pc-fail')+'"><span class="pc-b-label">ফলাফল</span><span class="pc-b-val">'+resultText+'</span></div>'
+      +   '</div>'
+      +   remarkBlock
+      +   '<div class="pc-footer">'
+      +     '<div class="pc-sign-row">'
+      +       '<div class="pc-sign">অভিভাবক</div>'
+      +       '<div class="pc-sign">শ্রেণি শিক্ষক</div>'
+      +       '<div class="pc-sign">সুপারিনটেনডেন্ট</div>'
+      +     '</div>'
+      +     '<div class="pc-credit">ইস্যু তারিখ: '+pcToBn(r.printDate)+' &nbsp;|&nbsp; সফটওয়্যার ডেভেলপার: রায়সুল ইসলাম সাঈদ</div>'
+      +   '</div>'
+      + '</div></div></div>';
+
+    root.innerHTML = html;
+  }
+
+  window.__pcSyncCertificate = buildPrintCertificate;
+})();
+</script>
 </body>
 </html>
-
