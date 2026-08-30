@@ -1,5 +1,5 @@
 // প্রতিটি নতুন ডিপ্লয়ে এই ভার্সন নাম্বার বাড়িয়ে দিলে পুরনো ক্যাশ ক্লিয়ার হয়ে যাবে
-const CACHE_VERSION = 'v4'; // v3 -> v4: install handler ফিক্স, প্রতিটা ফাইল আলাদাভাবে ক্যাশ হবে
+const CACHE_VERSION = 'v5'; // v4 -> v5: navigate রিকোয়েস্টে সবসময় offline.html দেখাবে, cached home page না
 const CACHE_NAME = 'ardm-result-' + CACHE_VERSION;
 
 // প্রথমবার ইনস্টলের সময় যেগুলো প্রি-ক্যাশ করা হবে (অফলাইন সাপোর্টের জন্য)
@@ -47,6 +47,22 @@ self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
 
+  // পেজ নেভিগেশন (সরাসরি সাইটে ঢোকা/রিলোড): অফলাইনে গেলে সবসময় offline.html দেখাও।
+  // home page ক্যাশে থাকলেও সেটা দেখানো হবে না, কারণ সার্চ/রেজাল্ট তো নেটওয়ার্ক ছাড়া কাজ করবে না
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match('/offline.html'))
+    );
+    return;
+  }
+
+  // বাকি static ফাইল (JS/CSS/ছবি): নেটওয়ার্ক-ফার্স্ট, ক্যাশ ফলব্যাক
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -54,14 +70,6 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         return response;
       })
-      .catch(() => {
-        return caches.match(event.request).then((cached) => {
-          if (cached) return cached;
-          // পেজ ভিজিট (নেভিগেশন) হলে এবং কোনো ক্যাশও না পেলে অফলাইন পেজ দেখাও
-          if (event.request.mode === 'navigate') {
-            return caches.match('/offline.html');
-          }
-        });
-      })
+      .catch(() => caches.match(event.request))
   );
 });
