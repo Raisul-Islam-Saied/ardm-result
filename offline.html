@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ইন্টারনেট সংযোগ নেই | আবদুর রাজ্জাক দাখিল মাদ্রাসা</title>
+<style>
+  :root{
+    --ink:#1c211f;
+    --muted:#5c6660;
+    --paper:#ffffff;
+    --bg:#f2f0ea;
+    --brand:#0b3d2e;
+    --brand-2:#0e4f3a;
+    --brand-soft:#e8f1ec;
+    --gold:#8a6a24;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,'Segoe UI','Noto Sans Bengali','Hind Siliguri',sans-serif;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{
+    background:var(--paper);
+    border:1px solid #d7d2c2;
+    border-top:4px solid var(--brand);
+    border-radius:6px;
+    padding:36px 28px;
+    max-width:420px;width:100%;
+    text-align:center;
+    box-shadow:0 1px 3px rgba(20,30,25,.08);
+  }
+  .icon{
+    width:64px;height:64px;margin:0 auto 18px;
+    background:var(--brand-soft);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon svg{width:30px;height:30px;}
+  h1{
+    font-size:19px;font-weight:700;color:var(--brand);
+    margin:0 0 8px;
+  }
+  p{
+    font-size:14px;color:var(--muted);
+    line-height:1.7;margin:0 0 22px;
+  }
+  .inst{
+    font-size:12px;color:var(--gold);font-weight:600;
+    margin:0 0 22px;
+  }
+  button{
+    background:var(--brand);color:#fff;border:none;border-radius:3px;
+    font-size:14.5px;font-weight:700;font-family:inherit;
+    padding:12px 24px;width:100%;cursor:pointer;
+  }
+  button:active{background:var(--brand-2);}
+  .status{
+    margin-top:14px;font-size:12px;color:var(--muted);
+  }
+  .status.online{color:#1c5c39;font-weight:700;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0b3d2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    <h1>ইন্টারনেট সংযোগ নেই</h1>
+    <p>এই মুহূর্তে আপনার ইন্টারনেট সংযোগ পাওয়া যাচ্ছে না। সংযোগ ফিরে এলে ফলাফল পেজটি স্বয়ংক্রিয়ভাবে লোড হয়ে যাবে।</p>
+    <div class="inst">আবদুর রাজ্জাক দাখিল মাদ্রাসা — রেজাল্ট পোর্টাল</div>
+    <button onclick="window.location.reload()">আবার চেষ্টা করুন</button>
+    <div id="statusText" class="status">সংযোগের জন্য অপেক্ষা করা হচ্ছে...</div>
+  </div>
+
+  <script>
+    function updateStatus() {
+      var el = document.getElementById('statusText');
+      if (navigator.onLine) {
+        el.textContent = 'সংযোগ ফিরে এসেছে — লোড হচ্ছে...';
+        el.className = 'status online';
+        setTimeout(function () { window.location.reload(); }, 600);
+      }
+    }
+    window.addEventListener('online', updateStatus);
+    updateStatus();
+  </script>
+</body>
+</html>
