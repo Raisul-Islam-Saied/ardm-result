@@ -1534,9 +1534,6 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
   /* ==========================================================
      INIT / URL AUTO-SEARCH
   ========================================================== */
-     /* ==========================================================
-     INIT / URL AUTO-SEARCH
-  ========================================================== */
   function parseUrlParams(){
     var path = window.location.pathname.replace(/^\/|\/$/g, '');
     if (path && /^\d+$/.test(path)) { 
@@ -1560,6 +1557,12 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
   autoSearch = parseUrlParams();
   if (autoSearch){
+    // 💡 হিস্ট্রি ট্রিক: ফোনের ব্যাক বাটনে চাপ দিলে যেন বের না করে দেয়, তার জন্য ডামি হিস্ট্রি পুশ করা হলো
+    try {
+      window.history.replaceState(null, '', '/'); // ব্যাকগ্রাউন্ডে হোম পেজ সেট করা হলো
+      window.history.pushState(null, '', window.location.pathname); // বর্তমান পেজটিকে সামনে রাখা হলো
+    } catch(e) {}
+
     // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
     searchView.hidden = true;
     globalLoader.hidden = false;
