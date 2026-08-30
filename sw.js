@@ -1,5 +1,5 @@
 // প্রতিটি নতুন ডিপ্লয়ে এই ভার্সন নাম্বার বাড়িয়ে দিলে পুরনো ক্যাশ ক্লিয়ার হয়ে যাবে
-const CACHE_VERSION = 'v2'; // v1 -> v2: পুরনো ভারী ক্যাশ (Tailwind/Fonts সহ) মুছে ফেলার জন্য বাড়ানো হলো
+const CACHE_VERSION = 'v3'; // v2 -> v3: offline.html precache-এ যোগ হলো
 const CACHE_NAME = 'ardm-result-' + CACHE_VERSION;
 
 // প্রথমবার ইনস্টলের সময় যেগুলো প্রি-ক্যাশ করা হবে (অফলাইন সাপোর্টের জন্য)
@@ -9,7 +9,8 @@ const PRECACHE_URLS = [
   '/config.js',
   '/manifest.json',
   '/logo-192.png',
-  '/logo-512.png'
+  '/logo-512.png',
+  '/offline.html'
 ];
 
 // ইনস্টল হওয়ার সাথে সাথেই নতুন সার্ভিস ওয়ার্কার একটিভ হবে (পুরনোটির জন্য অপেক্ষা করবে না)
@@ -47,6 +48,14 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          if (cached) return cached;
+          // পেজ ভিজিট (নেভিগেশন) হলে এবং কোনো ক্যাশও না পেলে অফলাইন পেজ দেখাও
+          if (event.request.mode === 'navigate') {
+            return caches.match('/offline.html');
+          }
+        });
+      })
   );
 });
