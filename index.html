@@ -1560,7 +1560,10 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
   autoSearch = parseUrlParams();
   if (autoSearch){
-    try { window.history.replaceState({}, '', '/'); } catch(e){}
+    try {
+  window.history.replaceState({}, '', '/');
+  window.history.pushState({}, '', '/');
+} catch(e){}
     // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
     searchView.hidden = true;
     globalLoader.hidden = false;
