@@ -864,13 +864,14 @@
     });
     return idx !== -1 ? String(data[idx]) : '-';
   }
-  function encodeShortId(year, exam, cls, roll){
-    var examCode = EXAM_CODE_MAP[exam] || '3';
-    var cc = CLASS_CODE_MAP[cls] || '00';
-    var yy = String(year).slice(-2);
-    var rr = String(toEnNum(roll)).padStart(4,'0');
-    return yy + examCode + cc + rr;
-  }
+function encodeShortId(year, exam, cls, roll){
+  var examCode = EXAM_CODE_MAP[exam] || '3';
+  var cc = CLASS_CODE_MAP[cls] || '00';
+  var yy = String(year).slice(-2);
+  var rr = String(toEnNum(roll)).padStart(3,'0'); // এখানে ৩ করা হয়েছে
+  return yy + examCode + cc + rr;
+}
+
   function decodeShortId(id){
     if (!id || id.length < 8) return null;
     var yy = id.slice(0,2), e = id.slice(2,3), cc = id.slice(3,5), rr = id.slice(5);
@@ -1125,7 +1126,7 @@
       logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
 
       var shortId = encodeShortId(year, exam, cls, id);
-      try { window.history.pushState({}, '', '?id=' + shortId); } catch(e){}
+try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
       renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo });
 
@@ -1461,12 +1462,13 @@
     performSearch(fClass.value, fExam.value, fYear.value, fId.value.trim());
   });
 
-  backBtn.addEventListener('click', function(){
+    backBtn.addEventListener('click', function(){
     resultView.hidden = true;
     searchView.hidden = false;
     hideStatus();
-    try { window.history.pushState({}, '', window.location.pathname); } catch(e){}
+    try { window.history.pushState({}, '', '/'); } catch(e){} // এখানে পরিবর্তন করা হয়েছে
   });
+
 
   downloadBtn.addEventListener('click', handleDownloadImage);
 
@@ -1488,7 +1490,15 @@
   /* ==========================================================
      INIT / URL AUTO-SEARCH
   ========================================================== */
-  function parseUrlParams(){
+    function parseUrlParams(){
+    // প্রথমে পাথ (path) থেকে আইডি পড়ার চেষ্টা করবে
+    var path = window.location.pathname.replace(/^\/|\/$/g, '');
+    if (path && /^\d+$/.test(path)) { // যদি পাথটি শুধুমাত্র সংখ্যার হয়
+      var decoded = decodeShortId(path);
+      if (decoded) return decoded;
+    }
+
+    // আগের query parameter লজিক ফলব্যাক হিসেবে রাখা হলো
     var params = new URLSearchParams(window.location.search);
     var shortId = params.get('id');
     if (shortId){
