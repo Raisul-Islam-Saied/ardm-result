@@ -1,5 +1,5 @@
 // প্রতিটি নতুন ডিপ্লয়ে এই ভার্সন নাম্বার বাড়িয়ে দিলে পুরনো ক্যাশ ক্লিয়ার হয়ে যাবে
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2'; // v1 -> v2: পুরনো ভারী ক্যাশ (Tailwind/Fonts সহ) মুছে ফেলার জন্য বাড়ানো হলো
 const CACHE_NAME = 'ardm-result-' + CACHE_VERSION;
 
 // প্রথমবার ইনস্টলের সময় যেগুলো প্রি-ক্যাশ করা হবে (অফলাইন সাপোর্টের জন্য)
@@ -33,6 +33,12 @@ self.addEventListener('activate', (event) => {
 // অফলাইন হলে ক্যাশ থেকে দেখাবে
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // থার্ড-পার্টি CDN (Tailwind, Google Fonts, html-to-image ইত্যাদি) স্কিপ করা হচ্ছে —
+  // ব্রাউজারের নিজস্ব HTTP ক্যাশেই এগুলো ভালোভাবে হ্যান্ডেল হয়, SW ক্যাশে ডুপ্লিকেট রাখলে
+  // অকারণে অনেক জায়গা (আপনার ক্ষেত্রে ৪৯ MB) দখল করে নেয়
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin) return;
 
   event.respondWith(
     fetch(event.request)
