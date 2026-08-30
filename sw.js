@@ -1,5 +1,5 @@
 // প্রতিটি নতুন ডিপ্লয়ে এই ভার্সন নাম্বার বাড়িয়ে দিলে পুরনো ক্যাশ ক্লিয়ার হয়ে যাবে
-const CACHE_VERSION = 'v3'; // v2 -> v3: offline.html precache-এ যোগ হলো
+const CACHE_VERSION = 'v4'; // v3 -> v4: install handler ফিক্স, প্রতিটা ফাইল আলাদাভাবে ক্যাশ হবে
 const CACHE_NAME = 'ardm-result-' + CACHE_VERSION;
 
 // প্রথমবার ইনস্টলের সময় যেগুলো প্রি-ক্যাশ করা হবে (অফলাইন সাপোর্টের জন্য)
@@ -17,7 +17,13 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).catch(() => {})
+    caches.open(CACHE_NAME).then((cache) => {
+      // প্রতিটা ফাইল আলাদাভাবে ক্যাশ করা হচ্ছে — একটা ফাইল (যেমন লোগো) মিসিং/৪০৪ হলেও
+      // বাকিগুলো (বিশেষ করে offline.html) যেন ঠিকমতো ক্যাশ হয়
+      return Promise.all(
+        PRECACHE_URLS.map((url) => cache.add(url).catch(() => {}))
+      );
+    })
   );
 });
 
