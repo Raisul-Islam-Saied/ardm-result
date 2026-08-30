@@ -1161,7 +1161,9 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
       });
 
       logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
-
+if (isAutoLoad) {
+  try { window.history.replaceState({}, '', '/'); } catch(e){}
+}
       var shortId = encodeShortId(year, exam, cls, id);
 try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
