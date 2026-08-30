@@ -1162,8 +1162,10 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
 
       logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
 
-      var shortId = encodeShortId(year, exam, cls, id);
-try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
+      if (!isAutoLoad) {
+  var shortId = encodeShortId(year, exam, cls, id);
+  try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
+}
 
       renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo });
 
@@ -1558,12 +1560,14 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
     return null;
   }
 
-  autoSearch = parseUrlParams();
+    autoSearch = parseUrlParams();
   if (autoSearch){
     try {
-  window.history.replaceState({}, '', '/');
-  window.history.pushState({}, '', '/');
-} catch(e){}
+      var currentUrl = window.location.href; // বর্তমান লিংকটা ধরে রাখছি
+      window.history.replaceState({}, '', '/'); // ব্যাক করলে যাতে ফর্মে যায়
+      window.history.pushState({}, '', currentUrl); // এখনকার রেজাল্ট লিংক
+    } catch(e){}
+
     // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
     searchView.hidden = true;
     globalLoader.hidden = false;
