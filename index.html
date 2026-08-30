@@ -1506,13 +1506,13 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
     performSearch(fClass.value, fExam.value, fYear.value, fId.value.trim());
   });
 
-    backBtn.addEventListener('click', function(){
+  backBtn.addEventListener('click', function(){
+    if (globalLoader) globalLoader.hidden = true;
     resultView.hidden = true;
     searchView.hidden = false;
     hideStatus();
-    try { window.history.pushState({}, '', '/'); } catch(e){} // এখানে পরিবর্তন করা হয়েছে
+    try { window.history.pushState({}, '', '/'); } catch(e){}
   });
-
 
   downloadBtn.addEventListener('click', handleDownloadImage);
 
@@ -1524,11 +1524,12 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
   });
 
   window.addEventListener('popstate', function(){
-    if (!resultView.hidden){
-      resultView.hidden = true;
-      searchView.hidden = false;
-      hideStatus();
-    }
+    // 💡 আপনার লজিক: ব্যাক বাটন চাপলে ফর্ম দেখাবে এবং URL থেকে প্যারামিটার কেটে মেইন লিংকে (/) চলে যাবে
+    if (globalLoader) globalLoader.hidden = true;
+    if (resultView) resultView.hidden = true;
+    if (searchView) searchView.hidden = false;
+    hideStatus();
+    try { window.history.replaceState({}, '', '/'); } catch(e){}
   });
 
   /* ==========================================================
@@ -1557,29 +1558,21 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
   autoSearch = parseUrlParams();
   if (autoSearch){
-    // 💡 হিস্ট্রি ট্রিক: ফোনের ব্যাক বাটনে চাপ দিলে যেন বের না করে দেয়, তার জন্য ডামি হিস্ট্রি পুশ করা হলো
-    try {
-      window.history.replaceState(null, '', '/'); // ব্যাকগ্রাউন্ডে হোম পেজ সেট করা হলো
-      window.history.pushState(null, '', window.location.pathname); // বর্তমান পেজটিকে সামনে রাখা হলো
-    } catch(e) {}
-
-    // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
-    searchView.hidden = true;
-    globalLoader.hidden = false;
+    // 💡 আগের সব হাবিজাবি হিস্ট্রি ট্রিক বাদ দেওয়া হলো
+    if (searchView) searchView.hidden = true;
+    if (globalLoader) globalLoader.hidden = false;
     
     fClass.value = autoSearch.cls; fExam.value = autoSearch.exam; fYear.value = autoSearch.year; fId.value = autoSearch.roll;
   }
 
   fetchAllExams().then(function(){
     if (autoSearch){
-      // isAutoLoad = true প্যারামিটার পাস করছি
       performSearch(autoSearch.cls, autoSearch.exam, autoSearch.year, autoSearch.roll, true);
     }
   }).catch(function(err){
-    // কোনো কারণে শিট ডেটা লোড না হলে লোডার লুকিয়ে ফর্ম দেখাবো
     if (autoSearch) {
-       globalLoader.hidden = true;
-       searchView.hidden = false;
+       if (globalLoader) globalLoader.hidden = true;
+       if (searchView) searchView.hidden = false;
     }
     showStatus(err.message || 'তথ্য লোড করতে সমস্যা হয়েছে। পেজটি রিফ্রেশ করুন।', 'error');
   });
