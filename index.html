@@ -89,36 +89,7 @@
      MAIN / LAYOUT
   ========================================================== */
   .main{flex:1;width:100%;max-width:900px;margin:0 auto;padding:32px 20px 56px;}
-/* ==========================================================
-     GLOBAL LOADER (For Direct Links)
-  ========================================================== */
-  #globalLoader {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .loader-spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid var(--brand-soft);
-    border-top: 4px solid var(--brand);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 16px;
-  }
-  .loader-text {
-    font-family: var(--font-serif);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--brand);
-    animation: pulseLoader 1.5s infinite;
-  }
-  @keyframes pulseLoader { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
   /* ---------- Search view ---------- */
   .search-view{display:flex;justify-content:center;}
   .search-card{
@@ -578,15 +549,11 @@
   </header>
 
   <main class="main">
-<!-- ===================== GLOBAL LOADER ===================== -->
-    <div id="globalLoader" hidden>
-      <div class="loader-spinner"></div>
-      <div class="loader-text">ফলাফল খোঁজা হচ্ছে...</div>
-    </div>
+
     <!-- ===================== SEARCH VIEW ===================== -->
     <section id="searchView" class="search-view">
       <div class="search-card">
-        <h2>একাডেমিক ফলাফল.</h2>
+        <h2>একাডেমিক ফলাফল</h2>
         <p class="lead">শ্রেণি, পরীক্ষা, শিক্ষাবর্ষ এবং রোল অথবা আইডি নম্বর প্রদান করে আপনার ফলাফল দেখুন।</p>
 
         <form id="searchForm" novalidate>
@@ -1001,7 +968,7 @@ function encodeShortId(year, exam, cls, roll){
   var searchForm = $('searchForm'), searchBtn = $('searchBtn'), statusBox = $('statusBox');
   var searchView = $('searchView'), resultView = $('resultView'), certificate = $('certificate');
   var backBtn = $('backBtn'), downloadBtn = $('downloadBtn'), complaintBtn = $('complaintBtn');
-var globalLoader = $('globalLoader'); // এই লাইনটি যোগ করুন
+
   function fillSelect(sel, options){
     options.forEach(function(o){
       var opt = document.createElement('option');
@@ -1071,7 +1038,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
   /* ==========================================================
      SEARCH WITH FAKE LOADING
   ========================================================== */
-  function performSearch(cls, exam, year, id, isAutoLoad = false){
+  function performSearch(cls, exam, year, id){
     hideStatus();
     
     // 💡 Added Advanced Inline Validation Check
@@ -1083,10 +1050,6 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
 
     if(hasError){
       // 💡 No global message shown here anymore
-      if(isAutoLoad) {
-        globalLoader.hidden = true;
-        searchView.hidden = false;
-      }
       return Promise.resolve();
     }
     
@@ -1162,25 +1125,16 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
 
       logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
 
-      if (!isAutoLoad) {
-  var shortId = encodeShortId(year, exam, cls, id);
-  try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
-}
+      var shortId = encodeShortId(year, exam, cls, id);
+try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
       renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo });
 
     }).catch(function(err){
-      if(isAutoLoad) {
-        globalLoader.hidden = true;
-        searchView.hidden = false;
-      }
       showStatus(err.message || 'ফলাফল পাওয়া যায়নি।', 'error');
     }).finally(function(){
       searchBtn.disabled = false;
       searchBtn.textContent = originalBtnText; 
-      if(isAutoLoad) {
-        globalLoader.hidden = true;
-      }
     });
   }
 
@@ -1536,16 +1490,15 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
   /* ==========================================================
      INIT / URL AUTO-SEARCH
   ========================================================== */
-     /* ==========================================================
-     INIT / URL AUTO-SEARCH
-  ========================================================== */
-  function parseUrlParams(){
+    function parseUrlParams(){
+    // প্রথমে পাথ (path) থেকে আইডি পড়ার চেষ্টা করবে
     var path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (path && /^\d+$/.test(path)) { 
+    if (path && /^\d+$/.test(path)) { // যদি পাথটি শুধুমাত্র সংখ্যার হয়
       var decoded = decodeShortId(path);
       if (decoded) return decoded;
     }
 
+    // আগের query parameter লজিক ফলব্যাক হিসেবে রাখা হলো
     var params = new URLSearchParams(window.location.search);
     var shortId = params.get('id');
     if (shortId){
@@ -1560,37 +1513,20 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
     return null;
   }
 
-    autoSearch = parseUrlParams();
+  autoSearch = parseUrlParams();
   if (autoSearch){
-    try {
-      var currentUrl = window.location.href; // বর্তমান লিংকটা ধরে রাখছি
-      window.history.replaceState({}, '', '/'); // ব্যাক করলে যাতে ফর্মে যায়
-      window.history.pushState({}, '', currentUrl); // এখনকার রেজাল্ট লিংক
-    } catch(e){}
-
-    // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
-    searchView.hidden = true;
-    globalLoader.hidden = false;
-    
     fClass.value = autoSearch.cls; fExam.value = autoSearch.exam; fYear.value = autoSearch.year; fId.value = autoSearch.roll;
   }
 
   fetchAllExams().then(function(){
     if (autoSearch){
-      // isAutoLoad = true প্যারামিটার পাস করছি
-      performSearch(autoSearch.cls, autoSearch.exam, autoSearch.year, autoSearch.roll, true);
+      performSearch(autoSearch.cls, autoSearch.exam, autoSearch.year, autoSearch.roll);
     }
   }).catch(function(err){
-    // কোনো কারণে শিট ডেটা লোড না হলে লোডার লুকিয়ে ফর্ম দেখাবো
-    if (autoSearch) {
-       globalLoader.hidden = true;
-       searchView.hidden = false;
-    }
     showStatus(err.message || 'তথ্য লোড করতে সমস্যা হয়েছে। পেজটি রিফ্রেশ করুন।', 'error');
   });
 
 })();
-
   
 if ('serviceWorker' in navigator) {
   var hadController = !!navigator.serviceWorker.controller;
