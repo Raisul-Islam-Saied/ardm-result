@@ -1161,9 +1161,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
       });
 
       logSearchSilently(headers, studentRow, cls, exam, year, normalizedId);
-if (isAutoLoad) {
-  try { window.history.replaceState({}, '', '/'); } catch(e){}
-}
+
       var shortId = encodeShortId(year, exam, cls, id);
 try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
@@ -1562,6 +1560,7 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
   autoSearch = parseUrlParams();
   if (autoSearch){
+    try { window.history.replaceState({}, '', '/'); } catch(e){}
     // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
     searchView.hidden = true;
     globalLoader.hidden = false;
