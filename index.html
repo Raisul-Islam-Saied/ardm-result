@@ -1518,11 +1518,26 @@
 
 })();
   
-  if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
+  var hadController = !!navigator.serviceWorker.controller;
+
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('/sw.js');
   });
+
+  var refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    // প্রথমবার SW একটিভ হওয়াটা "আপডেট" না, তাই রিলোড দরকার নেই — শুধু আসল আপডেটেই রিলোড হবে
+    if (!hadController) return;
+    
+    // ইনফিনিট লুপ ঠেকানোর জন্য
+    if (refreshing) return;
+    refreshing = true;
+    
+    window.location.reload();
+  });
 }
+
 
 
 </script>
