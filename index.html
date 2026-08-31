@@ -24,7 +24,7 @@
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
   
-  /* রেজাল্ট পেজের রিস্টোর স্টাইল (Tailwind কনফ্লিক্ট এড়াতে) */
+  /* রেজাল্ট পেজের রিস্টোর স্টাইল (Tailwind কনফ্লিক্ট এড়াতে) */
   #resultSection * { box-sizing: border-box; }
   #resultSection [hidden] { display: none !important; }
 
@@ -414,7 +414,7 @@
 </head>
 <body>
 <!-- ========================================================== -->
-  <!-- ১. TIMER SECTION (সময় না হলে এটি দেখাবে)                      -->
+  <!-- ১. TIMER SECTION (সময় না হলে এটি দেখাবে)                      -->
   <!-- ========================================================== -->
   <div id="timerSection" class="min-h-screen bg-[#050b14] text-slate-200 font-sans selection:bg-cyan-500 overflow-hidden relative flex flex-col" style="display: none;">
     <div class="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] z-0 pointer-events-none"></div>
@@ -451,7 +451,7 @@
 
           <div class="text-center mb-10">
             <div class="inline-block bg-cyan-500/10 text-cyan-300 px-4 py-1 rounded-full text-sm font-semibold mb-4 border border-cyan-500/20 animate-pulse">
-              ফলাফল প্রকাশের সম্ভাব্য সময়
+              ফলাফল প্রকাশের সম্ভাব্য সময়
             </div>
             <h2 id="formattedDate" class="text-3xl md:text-5xl font-bold text-white mb-2"></h2>
             <p id="formattedTime" class="text-xl text-slate-400 font-mono"></p>
@@ -494,7 +494,7 @@
                <div>
                  <h4 class="text-yellow-500 font-bold text-sm uppercase mb-1">সতর্কবার্তা</h4>
                  <p class="text-xs text-slate-400 leading-relaxed">
-                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেনআগ।
+                   ফলাফল প্রকাশের সময় সার্ভারে অতিরিক্ত চাপ থাকতে পারে। দয়া করে ধৈর্য ধরুন। অন্য কোনো ওয়েবসাইটে নিজের ব্যক্তিগত তথ্য বা রোল নম্বর শেয়ার করবেনআগ।
                  </p>
                </div>
              </div>
@@ -559,7 +559,7 @@
   </div>
 
   <!-- ========================================================== -->
-  <!-- ২. RESULT SECTION (আপনার বর্তমান ডিভটাকে এভাবে মুড়িয়ে দিন)    -->
+  <!-- ২. RESULT SECTION (আপনার বর্তমান ডিভটাকে এভাবে মুড়িয়ে দিন)    -->
   <!-- ========================================================== -->
   <div id="resultSection" style="display: none;">
     <div class="page">
@@ -685,7 +685,7 @@
     let timerHasStarted = false;
 
     function checkTimeAndToggle() {
-      // এটি এখন সরাসরি config.js থেকে PUBLISH_DATE এর মান নিয়ে নেবে
+      // এটি এখন সরাসরি config.js থেকে PUBLISH_DATE এর মান নিয়ে নেবে
       const targetDateObj = new Date(PUBLISH_DATE); 
       const now = new Date();
       const difference = targetDateObj.getTime() - now.getTime();
@@ -724,7 +724,7 @@
       }
 
       dateEl.textContent = targetDateObj.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka' });
-      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' });
+      timeEl.textContent = "সময়: " + targetDateObj.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' });
 
       function updateCountdown() {
         const diff = targetDateObj.getTime() - new Date().getTime();
@@ -901,7 +901,7 @@ function encodeShortId(year, exam, cls, roll){
   var examCode = EXAM_CODE_MAP[exam] || '3';
   var cc = CLASS_CODE_MAP[cls] || '00';
   var yy = String(year).slice(-2);
-  var rr = String(toEnNum(roll)).padStart(3,'0'); // এখানে ৩ করা হয়েছে
+  var rr = String(toEnNum(roll)).padStart(3,'0'); // এখানে ৩ করা হয়েছে
   return yy + examCode + cc + rr;
 }
 
@@ -1023,7 +1023,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
   /* 💡 Added Validation Event Listeners with hiding logic */
   ['fClass', 'fExam', 'fYear', 'fId'].forEach(function(id){
     $(id).addEventListener('input', function(){
-      // যেকোনো ফিল্ডে হাত দিলে মেইন এরোর মেসেজ গায়েব হয়ে যাবে
+      // যেকোনো ফিল্ডে হাত দিলে মেইন এরোর মেসেজ গায়েব হয়ে যাবে
       hideStatus(); 
       
       if(this.value.trim() !== ''){
@@ -1105,7 +1105,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
           return s.sheetName.indexOf(']['+exam+']['+year+']') !== -1;
         });
         if (examYearMatch) {
-          return reject(new Error('রেজাল্ট এখনো পাবলিশ হয়নি। দয়া করে অপেক্ষা করুন।'));
+          return reject(new Error('রেজাল্ট এখনো পাবলিশ হয়নি। দয়া করে অপেক্ষা করুন।'));
         } else {
           return reject(new Error('এই তথ্য অনুযায়ী কোনো ফলাফল প্রকাশিত হয়নি।'));
         }
@@ -1510,7 +1510,7 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
     resultView.hidden = true;
     searchView.hidden = false;
     hideStatus();
-    try { window.history.pushState({}, '', '/'); } catch(e){} // এখানে পরিবর্তন করা হয়েছে
+    try { window.history.pushState({}, '', '/'); } catch(e){} // এখানে পরিবর্তন করা হয়েছে
   });
 
 
@@ -1560,7 +1560,7 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
   autoSearch = parseUrlParams();
   if (autoSearch){
-    // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
+    // সরাসরি লিংক থেকে আসলে সাথে সাথে ফর্ম লুকিয়ে লোডার চালু করে দেব
     searchView.hidden = true;
     globalLoader.hidden = false;
     
@@ -1573,7 +1573,7 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
       performSearch(autoSearch.cls, autoSearch.exam, autoSearch.year, autoSearch.roll, true);
     }
   }).catch(function(err){
-    // কোনো কারণে শিট ডেটা লোড না হলে লোডার লুকিয়ে ফর্ম দেখাবো
+    // কোনো কারণে শিট ডেটা লোড না হলে লোডার লুকিয়ে ফর্ম দেখাবো
     if (autoSearch) {
        globalLoader.hidden = true;
        searchView.hidden = false;
