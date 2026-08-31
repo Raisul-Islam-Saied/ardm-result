@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ardm-result.netlify.app/sitemap.xml
