@@ -719,7 +719,7 @@
 
   <footer class="site-footer no-print">
     <p>© ২০২৬ আবদুর রাজ্জাক দাখিল মাদ্রাসা — সর্বস্বত্ব সংরক্ষিত।</p>
-    <p>সিস্টেম ডেভেলপার: <a id="devLink" href="https://www.facebook.com/raisulislamsaied" target="_blank" class="dev-link">রায়সুল ইসলাম সাঈদ</a></p>
+    <p>সিস্টেম ডেভেলপার: <a id="devLink" href="https://m.facebook.com/raisulislamsaied" target="_blank" class="dev-link">রায়সুল ইসলাম সাঈদ</a></p>
   </footer>
 
 </div>
@@ -1668,37 +1668,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-(function(){
-  var FB_URL = 'https://www.facebook.com/raisulislamsaied';
-  var link = document.getElementById('devLink');
-  if (!link) return;
-
-  link.addEventListener('click', function(e){
-    var ua = navigator.userAgent || '';
-    var isAndroid = /Android/i.test(ua);
-    var isIOS = /iPhone|iPad|iPod/i.test(ua);
-    if (!isAndroid && !isIOS) return; // ডেস্কটপে সাধারণভাবেই খুলবে
-
-    e.preventDefault();
-
-    if (isAndroid) {
-      // অ্যাপ থাকলে অ্যাপে, না থাকলে ব্রাউজারে
-      window.location.href =
-        'intent://www.facebook.com/raisulislamsaied' +
-        '#Intent;scheme=https;package=com.facebook.katana;' +
-        'S.browser_fallback_url=' + encodeURIComponent(FB_URL) + ';end';
-    } else {
-      var start = Date.now();
-      window.location.href = 'fb://facewebmodal/f?href=' + encodeURIComponent(FB_URL);
-      // অ্যাপ না খুললে ব্রাউজারে ফলব্যাক
-      setTimeout(function(){
-        if (!document.hidden && Date.now() - start < 2000) {
-          window.location.href = FB_URL;
-        }
-      }, 1200);
-    }
-  });
-})();
 
 </script>
 </body>
