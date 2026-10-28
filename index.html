@@ -1584,16 +1584,20 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
 
     certificate.innerHTML = html;
 
-    // 💡 ট্যাব বাটনে ক্লিক ইভেন্ট
+        // 💡 ট্যাব বাটনে ক্লিক ইভেন্ট
     var tabNodes = certificate.querySelectorAll('.exam-tab');
     tabNodes.forEach(function(btn){
+      var labelSpan = btn.querySelector('.tab-label');
+      if (labelSpan) {
+        btn.setAttribute('data-orig-html', labelSpan.innerHTML);
+      }
+
       btn.addEventListener('click', function(){
         var targetExam = this.getAttribute('data-exam');
         if (!targetExam || targetExam === curExam) return;
 
-        // সব ট্যাব ডিজেবল করা এবং ক্লিক করা ট্যাবের লেখা মুছে শুধু স্পিনার দেখানো
+        // সব ট্যাব ডিজেবল করা এবং শুধু ক্লিক করা ট্যাবে স্পিনার দেখানো
         tabNodes.forEach(function(b){ b.disabled = true; });
-        var labelSpan = this.querySelector('.tab-label');
         if (labelSpan) {
           labelSpan.innerHTML = '<svg class="spin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>';
         }
@@ -1604,7 +1608,8 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
         fYear.value = curYear;
         fId.value = searchRoll;
 
-        performSearch(curClass, targetExam, curYear, searchRoll, false, true);
+        // 💡 performSearch ফাংশনে এই ট্যাবের বাটনটি (`this`) পাস করা হলো
+        performSearch(curClass, targetExam, curYear, searchRoll, false, true, this);
       });
     });
 
