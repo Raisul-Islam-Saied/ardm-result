@@ -1265,7 +1265,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
   /* ==========================================================
      SEARCH WITH FAKE LOADING
   ========================================================== */
-    function performSearch(cls, exam, year, id, isAutoLoad = false, isTabSwitch = false){
+      function performSearch(cls, exam, year, id, isAutoLoad = false, isTabSwitch = false){
     hideStatus();
     
     var hasError = false;
@@ -1290,6 +1290,11 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
 
     var prefix = '['+cls+']['+exam+']['+year+']';
     var targetSheet = publishedExams.filter(function(s){ return s.sheetName.indexOf(prefix) === 0; })[0];
+
+    // 💡 ফেইক লোডিং শুধু মূল সার্চের জন্য থাকবে (১ সেকেন্ড), ট্যাবের জন্য থাকবে না (০ সেকেন্ড)
+    var fakeDelay = new Promise(function(resolve) { 
+      setTimeout(resolve, isTabSwitch ? 0 : 1000); 
+    });
 
     var dataFetch = new Promise(function(resolve, reject){
       if (!targetSheet){
@@ -1322,7 +1327,8 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
       }
     });
 
-    return dataFetch.then(function(resultObj){
+    Promise.all([dataFetch, fakeDelay]).then(function(results){
+      var resultObj = results[0];
       var sheetData = resultObj.data;
       var sheetInfo = resultObj.sheetInfo;
 
