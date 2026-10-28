@@ -103,7 +103,7 @@
     --paper:#ffffff;
     --bg:#f2f0ea;
     --brand:#0b3d2e;
-    --brand-2:#0e4f3a;linear
+    --brand-2:#0e4f3a;
     --brand-soft:#e8f1ec;
     --gold:#8a6a24;
     --danger:#7a2020;
@@ -251,7 +251,7 @@
   .btn--ghost:hover{background:#eceae2;}
   .btn--link{background:transparent;color:var(--brand);border:none;text-decoration:underline;font-weight:600;padding:6px 4px;}
 
-  .spin-icon { animation: splinearlinear infinite; }
+  .spin-icon { animation: spin 1s linear infinite; }
   @keyframes spin { 100% { transform: rotate(360deg); } }
 
   .status-box{
@@ -474,67 +474,104 @@
   #printWrapper .sig-block{text-align:center;width:160px;}
   #printWrapper .sig-line{border-top:1px solid #222;padding-top:5px;font-size:14px;font-weight:700;color:#222;}
   #printWrapper .computer-credit{position:absolute;bottom:8px;width:100%;text-align:center;font-size:13px;font-weight:bold;color:#222;left:0;}
-  /* ---------- Final Result Switch Banner ---------- */
-  .switch-banner {
-    background: #fffbeb;
-    border: 2px solid #f59e0b;
-    border-radius: 6px;
-    padding: 14px 18px;
-    margin-bottom: 18px;
+  /* ==========================================================
+     EXAM SWITCH TABS & TOOLTIP
+  ========================================================== */
+  .exam-tabs-wrap {
+    margin: 18px 0 16px;
+    position: relative;
+  }
+  /* টুলটিপ থাকলে উপরের টেবিলের সাথে যেন লেগে না যায় সেজন্য বাড়তি জায়গা */
+  .exam-tabs-wrap.has-tooltip {
+    padding-top: 32px;
+  }
+  .exam-tabs {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    align-items: stretch;
+    background: #eceae2;
+    border: 1px solid var(--line-strong);
+    border-bottom: 2px solid var(--brand);
+    border-radius: 6px 6px 0 0;
+    padding: 4px 4px 0;
+    gap: 4px;
+  }
+  .exam-tab {
+    flex: 1;
+    position: relative;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 9px 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--muted);
     text-align: center;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
-    animation: fadeInUp 0.4s ease-out forwards;
-  }
-  .switch-banner--final {
-    background: var(--brand-soft);
-    border-color: var(--brand);
-    box-shadow: none;
-  }
-  .switch-banner__text {
-    font-size: 14.5px;
-    font-weight: 700;
-    color: #92400e;
-    line-height: 1.5;
-  }
-  .switch-banner--final .switch-banner__text {
-    color: var(--brand);
-  }
-  .switch-banner__btn {
-    background: #d97706;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 700;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+    justify-content: center;
+    gap: 5px;
     white-space: nowrap;
   }
-  .switch-banner__btn:hover {
-    background: #b45309;
-    transform: translateY(-1px);
-  }
-  .switch-banner--final .switch-banner__btn {
-    background: #ffffff;
+  .exam-tab:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.6);
     color: var(--brand);
-    border: 1px solid var(--brand);
   }
-  .switch-banner--final .switch-banner__btn:hover {
+  .exam-tab.active {
     background: var(--brand);
     color: #ffffff;
+    box-shadow: 0 -2px 6px rgba(11, 61, 46, 0.12);
   }
-  @media (min-width: 640px) {
-    .switch-banner {
-      flex-direction: row;
-      text-align: left;
+  .exam-tab--final:not(.active) {
+    color: var(--brand);
+    background: var(--brand-soft);
+    border-color: #bcd6c8;
+  }
+
+  /* ফাইনাল ট্যাবের উপরের টুলটিপ */
+  .final-tooltip {
+    position: absolute;
+    bottom: calc(100% + 9px);
+    right: 0;
+    background: #d97706;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(217, 119, 6, 0.35);
+    pointer-events: none;
+    z-index: 20;
+    animation: tooltipBounce 1.4s ease-in-out infinite;
+  }
+  /* টুলটিপের নিচের তীর চিহ্ন */
+  .final-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 22px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #d97706 transparent transparent transparent;
+  }
+  @keyframes tooltipBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  @media (max-width: 640px) {
+    .exam-tab {
+      font-size: 11.5px;
+      padding: 8px 3px;
+    }
+    .final-tooltip {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+    .final-tooltip::after {
+      right: 16px;
     }
   }
 
@@ -761,7 +798,6 @@
 
     <!-- ===================== RESULT VIEW ===================== -->
     <section id="resultView" class="result-view" hidden>
-       <div id="examSwitchBanner" class="no-print" hidden></div>
       <article class="certificate" id="certificate"></article>
 
       <div class="toolbar toolbar--bottom no-print">
@@ -948,6 +984,14 @@
     'Annual': 'বার্ষিক পরীক্ষা',
     'Final Result': 'চূড়ান্ত ফলাফল (গড়)'
   };
+  var tabLabelMap = {
+    '1st Terminal': '১ম সাময়িক',
+    '2nd Terminal': '২য় সাময়িক',
+    'Half Yearly': 'অর্ধ-বার্ষিক',
+    'Annual': '৩য় সাময়িক',
+    'Final Result': 'ফাইনাল'
+  };
+  var examOrder = ['1st Terminal', '2nd Terminal', 'Half Yearly', 'Annual', 'Final Result'];
 
   var classOptions = [
     {val:'Play', label:'প্লে (Play)'}, {val:'Nursery', label:'নার্সারি (Nursery)'},
@@ -1200,7 +1244,8 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
   /* ==========================================================
      SEARCH WITH FAKE LOADING
   ========================================================== */
-  function performSearch(cls, exam, year, id, isAutoLoad = false){
+    function performSearch(cls, exam, year, id, isAutoLoad = false, isTabSwitch = false){
+
     hideStatus();
     
     // 💡 Added Advanced Inline Validation Check
@@ -1226,7 +1271,7 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
     var prefix = '['+cls+']['+exam+']['+year+']';
     var targetSheet = publishedExams.filter(function(s){ return s.sheetName.indexOf(prefix) === 0; })[0];
 
-    var fakeDelay = new Promise(function(resolve) { setTimeout(resolve, 1000); });
+        var fakeDelay = new Promise(function(resolve) { setTimeout(resolve, isTabSwitch ? 150 : 1000); });
 
     var dataFetch = new Promise(function(resolve, reject){
       if (!targetSheet){
@@ -1294,7 +1339,8 @@ var globalLoader = $('globalLoader'); // এই লাইনটি যোগ ক
       var shortId = encodeShortId(year, exam, cls, id);
 try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
 
-      renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo });
+            renderResult({ headers: headers, data: studentRow, highestMarks: highestMarks, sheetInfo: sheetInfo }, isTabSwitch);
+
 
     }).catch(function(err){
       if(isAutoLoad) {
@@ -1397,7 +1443,7 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
     });
   }
 
-  function renderResult(payload){
+    function renderResult(payload, isTabSwitch){
     var r = computeResult(payload);
     currentComputed = r;
 
@@ -1422,12 +1468,53 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
       + '<tr><th>Student ID</th><td colspan="3">'+esc(r.stdId)+'</td></tr>'
       + '<tr><th>শ্রেণি</th><td>'+toBn(r.stdClass)+'</td><th>রোল নম্বর</th><td>'+toBn(r.stdRoll)+'</td></tr>';
 
+    // 💡 ট্যাব বার তৈরি (শুধুমাত্র যখন Final Result পাবলিশ করা থাকবে)
+    var curClass = r.sheetInfo.className;
+    var curYear = r.sheetInfo.year;
+    var curExam = r.sheetInfo.examName;
+
+    function isExamPublished(exName) {
+      var pref = '[' + curClass + '][' + exName + '][' + curYear + ']';
+      var found = publishedExams.filter(function(s){ return s.sheetName.indexOf(pref) === 0; })[0];
+      if (!found) return false;
+      var info = parseSheetName(found.sheetName);
+      return !info.timestamp || Date.now() >= info.timestamp;
+    }
+
+    var tabsHtml = '';
+    if (isExamPublished('Final Result')) {
+      var availableExams = examOrder.filter(isExamPublished);
+      // যদি একের অধিক পরীক্ষা থাকে তবেই ট্যাব দেখাবে
+      if (availableExams.length > 1) {
+        var showTooltip = (curExam !== 'Final Result'); // ফাইনাল ছাড়া অন্য যেকোনো ট্যাবে (যেমন বার্ষিক) থাকলে টুলটিপ দেখাবে
+        var tabButtons = availableExams.map(function(exName){
+          var isActive = (exName === curExam);
+          var isFinal = (exName === 'Final Result');
+          var label = tabLabelMap[exName] || exName;
+          var btnClass = 'exam-tab' + (isActive ? ' active' : '') + (isFinal ? ' exam-tab--final' : '');
+          var tooltipHtml = (isFinal && showTooltip)
+            ? '<span class="final-tooltip">চূড়ান্ত ফলাফল এখানে</span>'
+            : '';
+
+          return '<button type="button" class="' + btnClass + '" data-exam="' + esc(exName) + '">'
+               + tooltipHtml
+               + '<span class="tab-label">' + esc(label) + '</span>'
+               + '</button>';
+        }).join('');
+
+        tabsHtml = '<div class="exam-tabs-wrap no-print' + (showTooltip ? ' has-tooltip' : '') + '">'
+                 +   '<div class="exam-tabs">' + tabButtons + '</div>'
+                 + '</div>';
+      }
+    }
+
     var html = ''
       + '<header class="certificate__head">'
       +   '<div class="doc-title">একাডেমিক ফলাফল বিবরণী</div>'
       +   '<div class="exam-line">'+esc(r.displayExamName)+' — '+toBn(r.sheetInfo.year)+'</div>'
       + '</header>'
       + '<table class="info-table"><tbody>'+infoRows+'</tbody></table>'
+      + tabsHtml
       + '<table class="subjects-table">'
       +   '<thead><tr><th>বিষয়ের নাম</th><th>পূর্ণমান</th><th>প্রাপ্ত নম্বর</th><th>সর্বোচ্চ নম্বর</th><th>গ্রেড পয়েন্ট</th></tr></thead>'
       +   '<tbody>'+subjectRows+'</tbody>'
@@ -1445,64 +1532,38 @@ try { window.history.pushState({}, '', '/' + shortId); } catch(e){}
       +   '<p class="note">এই ফলাফলটি কম্পিউটার-জেনারেটেড, স্বাক্ষরের প্রয়োজন নেই।</p>' 
       + '</footer>';
 
-        certificate.innerHTML = html;
+    certificate.innerHTML = html;
 
-    // 💡 Check if Final Result or Annual Result exists for quick switching
-    var switchBanner = $('examSwitchBanner');
-    if (switchBanner) {
-      var curClass = r.sheetInfo.className;
-      var curYear = r.sheetInfo.year;
-      var curExam = r.sheetInfo.examName;
-      var searchRoll = fId.value.trim() || toEnNum(r.stdRoll);
+    // 💡 ট্যাব বাটনে ক্লিক ইভেন্ট যুক্ত করা
+    var tabNodes = certificate.querySelectorAll('.exam-tab');
+    tabNodes.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var targetExam = this.getAttribute('data-exam');
+        if (!targetExam || targetExam === curExam) return;
 
-      var finalPrefix = '[' + curClass + '][Final Result][' + curYear + ']';
-      var annualPrefix = '[' + curClass + '][Annual][' + curYear + ']';
+        // ক্লিক করার সাথে সাথে লোডিং স্পিনার দেখানো
+        tabNodes.forEach(function(b){ b.disabled = true; });
+        var labelSpan = this.querySelector('.tab-label');
+        if (labelSpan) {
+          labelSpan.innerHTML = '<svg class="spin-icon" style="vertical-align:-2px; margin-right:4px;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>' + labelSpan.textContent;
+        }
 
-      var finalSheet = publishedExams.filter(function(s){ return s.sheetName.indexOf(finalPrefix) === 0; })[0];
-      var annualSheet = publishedExams.filter(function(s){ return s.sheetName.indexOf(annualPrefix) === 0; })[0];
+        var searchRoll = fId.value.trim() || toEnNum(r.stdRoll) || toEnNum(r.stdId);
+        fClass.value = curClass;
+        fExam.value = targetExam;
+        fYear.value = curYear;
+        fId.value = searchRoll;
 
-      var isFinalReady = finalSheet && (!parseSheetName(finalSheet.sheetName).timestamp || Date.now() >= parseSheetName(finalSheet.sheetName).timestamp);
-      var isAnnualReady = annualSheet && (!parseSheetName(annualSheet.sheetName).timestamp || Date.now() >= parseSheetName(annualSheet.sheetName).timestamp);
-
-      if (curExam !== 'Final Result' && isFinalReady) {
-        switchBanner.className = 'switch-banner no-print';
-        switchBanner.innerHTML = ''
-          + '<div class="switch-banner__text">📢 <strong>দৃষ্টি আকর্ষণ:</strong> এটি শুধুমাত্র ' + esc(r.displayExamName) + '-এর ফলাফল। আপনার সকল পরীক্ষার গড় ও <strong>চূড়ান্ত মেধাক্রম</strong> দেখতে নিচের বাটনে ক্লিক করুন:</div>'
-          + '<button type="button" id="quickSwitchBtn" class="switch-banner__btn">🏆 চূড়ান্ত ফলাফল (গড়) দেখুন</button>';
-        switchBanner.hidden = false;
-
-        $('quickSwitchBtn').onclick = function() {
-          fClass.value = curClass;
-          fExam.value = 'Final Result';
-          fYear.value = curYear;
-          fId.value = searchRoll;
-          performSearch(curClass, 'Final Result', curYear, searchRoll);
-        };
-      } else if (curExam === 'Final Result' && isAnnualReady) {
-        switchBanner.className = 'switch-banner switch-banner--final no-print';
-        switchBanner.innerHTML = ''
-          + '<div class="switch-banner__text">✅ আপনি এখন <strong>চূড়ান্ত ফলাফল (গড়)</strong> দেখছেন। শুধুমাত্র বার্ষিক পরীক্ষার একক নম্বরপত্র দেখতে চাইলে পাশে ক্লিক করুন:</div>'
-          + '<button type="button" id="quickSwitchBtn" class="switch-banner__btn">📄 বার্ষিক পরীক্ষার ফলাফল দেখুন</button>';
-        switchBanner.hidden = false;
-
-        $('quickSwitchBtn').onclick = function() {
-          fClass.value = curClass;
-          fExam.value = 'Annual';
-          fYear.value = curYear;
-          fId.value = searchRoll;
-          performSearch(curClass, 'Annual', curYear, searchRoll);
-        };
-      } else {
-        switchBanner.hidden = true;
-      }
-    }
+        performSearch(curClass, targetExam, curYear, searchRoll, false, true);
+      });
+    });
 
     searchView.hidden = true;
     resultView.hidden = false;
-    window.scrollTo({ top: 0 });
-
+    if (!isTabSwitch) {
+      window.scrollTo({ top: 0 });
+    }
   }
-
   /* ==========================================================
      HIDDEN CAPTURE NODE (pixel-identical marksheet for download)
   ========================================================== */
